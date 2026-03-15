@@ -262,6 +262,18 @@ ul.cl li,ol.cl li{font-size:13px;color:var(--text2);margin-bottom:4px;line-heigh
     <a class="ni ns" href="#brdf" onclick="closeMenu()">— BRDF &amp; Microfacet</a>
     <a class="ni ns" href="#fresnel" onclick="closeMenu()">— Fresnel &amp; Schlick</a>
     <a class="ni ns" href="#pbr-terms" onclick="closeMenu()">— D, F, G Terms</a>
+    <a class="ni" href="#ch-noise" onclick="closeMenu()"><span class="num">18</span>Noise Functions</a>
+    <a class="ni ns" href="#noise-value" onclick="closeMenu()">— Value &amp; Gradient Noise</a>
+    <a class="ni ns" href="#noise-perlin" onclick="closeMenu()">— Perlin Noise</a>
+    <a class="ni ns" href="#noise-simplex" onclick="closeMenu()">— Simplex Noise</a>
+    <a class="ni ns" href="#noise-fbm" onclick="closeMenu()">— fBm &amp; Fractals</a>
+    <a class="ni ns" href="#noise-worley" onclick="closeMenu()">— Worley / Cellular</a>
+    <a class="ni" href="#ch-physics" onclick="closeMenu()"><span class="num">19</span>Physics Simulation</a>
+    <a class="ni ns" href="#phys-rigidbody" onclick="closeMenu()">— Rigid Body Dynamics</a>
+    <a class="ni ns" href="#phys-integration" onclick="closeMenu()">— Integration Methods</a>
+    <a class="ni ns" href="#phys-collision" onclick="closeMenu()">— Collision Response</a>
+    <a class="ni ns" href="#phys-constraints" onclick="closeMenu()">— Constraints &amp; Joints</a>
+    <a class="ni ns" href="#phys-continuous" onclick="closeMenu()">— Continuous Detection</a>
     <a class="ni" href="#ch-cheat" onclick="closeMenu()"><span class="num">⚡</span>Quick Cheatsheet</a>
   </div>
 </nav>
@@ -271,11 +283,11 @@ ul.cl li,ol.cl li{font-size:13px;color:var(--text2);margin-bottom:4px;line-heigh
 <div class="hero">
   <div class="badge">Computer Graphics Math — Complete Reference</div>
   <h1>3D Math <em>Reference Guide</em></h1>
-  <p>Vectors, matrices, transforms, quaternions, rotation conversions, polar/spherical coords, curves &amp; splines, signed distance fields, PBR lighting math, barycentric coordinates, and engine programming essentials.</p>
+  <p>Vectors, matrices, transforms, quaternions, rotation conversions, polar/spherical coords, curves &amp; splines, SDFs, PBR lighting, barycentric coords, noise functions, and physics simulation math.</p>
   <div class="hero-stats">
-    <div class="stat"><span class="stat-n">17</span><span class="stat-l">Chapters</span></div>
-    <div class="stat"><span class="stat-n">120+</span><span class="stat-l">Formulas</span></div>
-    <div class="stat"><span class="stat-n">PBR</span><span class="stat-l">Lighting Math</span></div>
+    <div class="stat"><span class="stat-n">19</span><span class="stat-l">Chapters</span></div>
+    <div class="stat"><span class="stat-n">150+</span><span class="stat-l">Formulas</span></div>
+    <div class="stat"><span class="stat-n">PBR</span><span class="stat-l">+ Physics</span></div>
   </div>
 </div>
 
@@ -1000,6 +1012,8 @@ mat3 TBN = mat3(T, B, N);</code></pre>
     <div class="card"><div class="ct"><span class="d g"></span>Curves</div><ul class="cl"><li>Cubic Bézier: B(t) = Σ C(3,i)(1−t)^(3−i)t^i Pᵢ</li><li>Catmull-Rom tangent: Tᵢ = (Pᵢ₊₁−Pᵢ₋₁)/2</li><li>Hermite: positions + tangents at endpoints</li><li>Arc length: numerical integration of ‖B'(t)‖</li><li>de Casteljau: recursive lerp</li></ul></div>
     <div class="card"><div class="ct"><span class="d p"></span>SDF</div><ul class="cl"><li>Sphere: ‖p‖ − r</li><li>Union: min(d₁,d₂)</li><li>Intersect: max(d₁,d₂)</li><li>Subtract: max(dA,−dB)</li><li>Normal: normalize(gradient) via finite differences</li><li>Raymarch: step by SDF value</li></ul></div>
     <div class="card"><div class="ct"><span class="d y"></span>PBR Lighting</div><ul class="cl"><li>BRDF = diffuse + specular</li><li>D (GGX): microfacet distribution</li><li>F (Schlick): F₀+(1−F₀)(1−h·v)⁵</li><li>G (Smith): shadow-masking</li><li>Specular = DFG / (4 NdotL NdotV)</li><li>Metals: F₀=albedo, no diffuse</li></ul></div>
+    <div class="card"><div class="ct"><span class="d t"></span>Noise</div><ul class="cl"><li>Value: interpolate random scalars at grid corners</li><li>Perlin: dot(gradient, offset) per corner, fade curve</li><li>Simplex: fewer corners (3 in 2D), no axis artefacts</li><li>fBm: Σ persistence^i · noise(lacunarity^i · p)</li><li>Ridged: 1−|noise(p)| — sharp mountain ridges</li><li>Worley F1: min dist to nearest feature point</li></ul></div>
+    <div class="card"><div class="ct"><span class="d r"></span>Physics</div><ul class="cl"><li>F=ma, τ=r×F, α=I⁻¹τ</li><li>Sym. Euler: v+=a·dt, x+=v·dt (use new v)</li><li>Velocity Verlet: x+=v·dt+½a·dt², v+=½(a₀+a₁)·dt</li><li>Impulse J = −(1+e)v_rel / (1/mA+1/mB+rot terms)</li><li>Restitution: e=0 inelastic, e=1 elastic</li><li>PBD: correct positions directly, derive velocities</li></ul></div>
   </div>
 
   <div class="tw" style="margin-top:20px"><table>
@@ -1415,6 +1429,359 @@ float raymarch(vec3 ro, vec3 rd) {
   </div>
 
   <div class="engine-note"><strong>🎮 Engine use:</strong> This is the math behind Unity's Standard/Lit shader, Unreal's default material, and every modern renderer. D, F, G can be swapped for different approximations. IBL (Image-Based Lighting) samples a pre-filtered environment cubemap for the integral term — the split-sum approximation (Karis 2013) is how it's done in real-time. Understanding these terms lets you write custom shaders, debug material issues, and build your own render pipeline.</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ CH18: NOISE ══ -->
+<div class="chapter" id="ch-noise">
+  <div class="ch-head"><span class="ch-num">CHAPTER 18</span><h2 class="ch-title">Noise Functions</h2></div>
+  <p class="ch-desc">Noise functions generate pseudo-random values that vary smoothly across space. They are the backbone of procedural generation — terrain, clouds, fire, wood grain, marble, water, and virtually every natural-looking texture or shape in games.</p>
+
+  <h3 id="noise-value">Value Noise &amp; Gradient Noise</h3>
+  <p>All classic noise types share the same pipeline: divide space into a grid, assign random data to each lattice point, then interpolate between them.</p>
+
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d"></span>Value Noise</div>
+    <p style="font-size:12.5px">Assign a random <strong>scalar</strong> to each grid point, then interpolate. Fast but produces a blocky, low-frequency look. Rarely used directly — mostly as a building block.</p>
+    <ol class="steps" style="margin-top:8px">
+      <li>Hash grid cell corners to random values in [−1,1].</li>
+      <li>Compute fractional position within the cell.</li>
+      <li>Smoothstep the fractions (fade curve).</li>
+      <li>Trilinearly interpolate the 8 corner values.</li>
+    </ol></div>
+    <div class="card"><div class="ct"><span class="d g"></span>Gradient Noise (Perlin-style)</div>
+    <p style="font-size:12.5px">Assign a random <strong>gradient vector</strong> to each grid point. Dot the gradient with the offset vector to get contributions. More isotropic than value noise — no directional artefacts.</p>
+    <ol class="steps" style="margin-top:8px">
+      <li>Hash grid cell corners to gradient vectors.</li>
+      <li>Compute offset vectors from each corner to the point.</li>
+      <li>Dot each gradient with its offset vector.</li>
+      <li>Interpolate results using fade curve.</li>
+    </ol></div>
+  </div>
+
+  <h4>Fade / Smoothstep Curve</h4>
+  <p>Raw linear interpolation produces visible grid lines. Ken Perlin's quintic fade curve removes them completely:</p>
+  <div class="fg">
+    <div class="fi"><div class="fn">Cubic (Hermite) — original Perlin</div>$$f(t)=3t^2-2t^3$$<p style="font-size:11px;color:var(--text3);margin-top:4px">C1 continuous — zero derivative at t=0 and t=1</p></div>
+    <div class="fi"><div class="fn">Quintic (improved Perlin 2002)</div>$$f(t)=6t^5-15t^4+10t^3$$<p style="font-size:11px;color:var(--text3);margin-top:4px">C2 continuous — also zero second derivative at endpoints. Use this.</p></div>
+  </div>
+
+  <h3 id="noise-perlin">Perlin Noise</h3>
+  <p>Created by Ken Perlin (1983, improved 2002). The most widely used noise function in graphics. Gradient noise on a regular grid with a permutation table for hashing.</p>
+
+  <div class="mb"><div class="lbl">2D PERLIN CORE</div>
+  $$n(\mathbf{p}) = \sum_{\mathbf{c}\in\text{corners}} w(\mathbf{p}-\mathbf{c})\cdot\bigl(\mathbf{g}_\mathbf{c}\cdot(\mathbf{p}-\mathbf{c})\bigr)$$
+  <p style="font-size:11px;color:var(--text3);margin-top:6px">g_c = gradient at corner c. w = fade-curve-weighted interpolation coefficient. Output range ≈ [−0.7, 0.7] in 2D, [−0.9, 0.9] in 3D — normalize to [0,1] by multiplying by ~0.7 and offsetting.</p></div>
+
+<pre><code>// 2D Perlin noise — GLSL (compact)
+vec2 grad(ivec2 p) {
+    int h = (p.x * 1031 ^ p.y * 2999) & 7;
+    return normalize(vec2(h&1 ? 1.0:-1.0, h&2 ? 1.0:-1.0));
+}
+float fade(float t){ return t*t*t*(t*(t*6.0-15.0)+10.0); }
+
+float perlin(vec2 p) {
+    ivec2 i = ivec2(floor(p));
+    vec2  f = fract(p);
+    vec2  u = vec2(fade(f.x), fade(f.y));
+    float a = dot(grad(i),           f);
+    float b = dot(grad(i+ivec2(1,0)),f-vec2(1,0));
+    float c = dot(grad(i+ivec2(0,1)),f-vec2(0,1));
+    float d = dot(grad(i+ivec2(1,1)),f-vec2(1,1));
+    return mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
+}</code></pre>
+
+  <h4>Key Properties</h4>
+  <div class="tw"><table>
+    <tr><th>Property</th><th>Value / Notes</th></tr>
+    <tr><td>Output range (2D)</td><td>≈ [−0.7, 0.7] before normalization</td></tr>
+    <tr><td>Band-limited</td><td>Yes — frequency content roughly between 0.5 and 1.0 cycles per unit</td></tr>
+    <tr><td>Axis-aligned artefacts</td><td>Yes — visible lines at 0°, 45°, 90° in 2D</td></tr>
+    <tr><td>Tileability</td><td>Yes — tile at integer grid boundaries</td></tr>
+    <tr><td>Cost (2D)</td><td>~4 gradient evaluations + bilinear interp</td></tr>
+    <tr><td>Cost (3D)</td><td>~8 gradient evaluations + trilinear interp</td></tr>
+  </table></div>
+
+  <h3 id="noise-simplex">Simplex Noise</h3>
+  <p>Also by Ken Perlin (2001). Uses a simplex grid (triangles in 2D, tetrahedra in 3D) instead of a square/cube grid. Fewer corners to evaluate, no directional artefacts, scales better to higher dimensions.</p>
+
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d p"></span>Corner Count Comparison</div>
+    <div class="tw" style="margin-top:8px"><table>
+      <tr><th>Dimension</th><th>Perlin corners</th><th>Simplex corners</th></tr>
+      <tr><td>2D</td><td>4</td><td>3</td></tr>
+      <tr><td>3D</td><td>8</td><td>4</td></tr>
+      <tr><td>4D</td><td>16</td><td>5</td></tr>
+    </table></div></div>
+    <div class="card"><div class="ct"><span class="d g"></span>Advantages over Perlin</div>
+    <ul class="cl" style="margin-top:4px">
+      <li>No axis-aligned directional artefacts</li>
+      <li>O(n²) complexity in n dimensions vs O(2ⁿ) for Perlin</li>
+      <li>Smoother visual appearance</li>
+      <li>Slightly faster in 3D+</li>
+    </ul></div>
+  </div>
+
+  <h4>Simplex 2D Algorithm Outline</h4>
+  <ol class="steps">
+    <li><strong>Skew</strong> input point from square to simplex grid: (i,j) = floor(p + (x+y)·F₂) where F₂ = (√3−1)/2</li>
+    <li><strong>Un-skew</strong> back to find the three simplex corners in original space: G₂ = (3−√3)/6</li>
+    <li><strong>Determine</strong> which simplex (upper or lower triangle) the point falls in.</li>
+    <li><strong>Compute</strong> contribution from each of the 3 corners: t = 0.5 − x²−y², contribution = t⁴·(grad·offset)</li>
+    <li><strong>Sum</strong> contributions and scale to [−1,1].</li>
+  </ol>
+
+<pre><code>// Simplex noise 2D — GLSL (Ashima Arts / Ian McEwan version)
+// Widely used permutation-based implementation
+vec3 permute(vec3 x){return mod(((x*34.0)+1.0)*x,289.0);}
+
+float snoise(vec2 v){
+  const vec4 C = vec4(0.211324865,0.366025404,-0.577350269,0.024390244);
+  vec2 i = floor(v + dot(v, C.yy));
+  vec2 x0= v - i + dot(i, C.xx);
+  vec2 i1 = (x0.x > x0.y) ? vec2(1,0) : vec2(0,1);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod(i, 289.0);
+  vec3 p = permute(permute(i.y+vec3(0,i1.y,1))+i.x+vec3(0,i1.x,1));
+  vec3 m = max(0.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.0);
+  m = m*m; m = m*m;
+  vec3 x = 2.0*fract(p*C.www)-1.0;
+  vec3 h = abs(x)-0.5;
+  vec3 a0 = x-floor(x+0.5);
+  m *= 1.79284291-0.85373472*(a0*a0+h*h);
+  vec3 g;
+  g.x = a0.x*x0.x+h.x*x0.y;
+  g.yz= a0.yz*x12.xz+h.yz*x12.yw;
+  return 130.0*dot(m,g);
+}</code></pre>
+
+  <h3 id="noise-fbm">Fractal Brownian Motion (fBm)</h3>
+  <p>Stack multiple octaves of noise at increasing frequencies and decreasing amplitudes. The result looks natural and self-similar at multiple scales — like real terrain, clouds, and turbulence.</p>
+
+  <div class="mb"><div class="lbl">fBm FORMULA</div>
+  $$\text{fbm}(\mathbf{p})=\sum_{i=0}^{n-1}\text{amplitude}_i\cdot\text{noise}(\text{frequency}_i\cdot\mathbf{p})$$
+  $$\text{amplitude}_i = \text{persistence}^i,\qquad\text{frequency}_i = \text{lacunarity}^i$$</div>
+
+  <div class="fg">
+    <div class="fi"><div class="fn">Lacunarity</div>$$\text{lacunarity}\approx 2.0$$<p style="font-size:11px;color:var(--text3);margin-top:4px">How much frequency increases per octave. 2.0 = doubles each time.</p></div>
+    <div class="fi"><div class="fn">Persistence (gain)</div>$$\text{persistence}\approx 0.5$$<p style="font-size:11px;color:var(--text3);margin-top:4px">How much amplitude decreases per octave. 0.5 = halves each time.</p></div>
+    <div class="fi"><div class="fn">Hurst exponent H</div>$$\text{persistence}=\text{lacunarity}^{-H}$$<p style="font-size:11px;color:var(--text3);margin-top:4px">H≈1 = smooth terrain. H≈0.5 = rough/jagged. Controls fractal dimension.</p></div>
+  </div>
+
+<pre><code>// fBm — GLSL
+float fbm(vec2 p, int octaves) {
+    float value = 0.0, amplitude = 0.5, frequency = 1.0;
+    for (int i = 0; i < octaves; i++) {
+        value     += amplitude * snoise(p * frequency);
+        frequency *= 2.0;   // lacunarity
+        amplitude *= 0.5;   // persistence
+    }
+    return value;
+}</code></pre>
+
+  <h4>fBm Variants</h4>
+  <div class="tw"><table>
+    <tr><th>Variant</th><th>Formula change</th><th>Effect</th></tr>
+    <tr><td>Ridged noise</td><td>1 − |noise(p)|</td><td>Sharp mountain ridges</td></tr>
+    <tr><td>Turbulence</td><td>|noise(p)| summed</td><td>Billowing clouds, fire</td></tr>
+    <tr><td>Domain warping</td><td>fbm(p + fbm(p))</td><td>Swirling, organic shapes — Quilez technique</td></tr>
+    <tr><td>Warped ridged</td><td>Ridged with domain warp</td><td>Realistic terrain with erosion features</td></tr>
+  </table></div>
+
+<pre><code>// Domain warping — Inigo Quilez technique
+float warpedNoise(vec2 p) {
+    vec2 q = vec2(fbm(p + vec2(0.0, 0.0)),
+                  fbm(p + vec2(5.2, 1.3)));
+    return fbm(p + 4.0 * q);
+}</code></pre>
+
+  <h3 id="noise-worley">Worley / Cellular Noise</h3>
+  <p>Also called cellular noise or F1 noise. Returns the distance to the nearest of a set of randomly-distributed feature points. Produces a cell-like / cracked appearance — useful for stone, reptile scales, cell membranes, and cracks.</p>
+
+  <div class="mb"><div class="lbl">WORLEY NOISE</div>
+  $$F_1(\mathbf{p}) = \min_i\|\mathbf{p} - \mathbf{x}_i\|,\quad F_2(\mathbf{p}) = \text{second nearest distance}$$</div>
+
+  <div class="fg">
+    <div class="fi"><div class="fn">F1 (nearest)</div>$$F_1$$<p style="font-size:11px;color:var(--text3);margin-top:4px">Cell centers, cracks, stones</p></div>
+    <div class="fi"><div class="fn">F2 − F1</div>$$F_2-F_1$$<p style="font-size:11px;color:var(--text3);margin-top:4px">Cell borders — sharp network lines</p></div>
+    <div class="fi"><div class="fn">1 − F1</div>$$1-F_1$$<p style="font-size:11px;color:var(--text3);margin-top:4px">Inverted — bright spots at feature points</p></div>
+    <div class="fi"><div class="fn">F1 combined with fBm</div>$$F_1+\text{fbm}$$<p style="font-size:11px;color:var(--text3);margin-top:4px">Organic rocky terrain</p></div>
+  </div>
+
+<pre><code>// Worley noise 2D — GLSL
+float worley(vec2 p) {
+    vec2 i = floor(p);
+    float minDist = 1e9;
+    for (int y = -1; y <= 1; y++)
+    for (int x = -1; x <= 1; x++) {
+        vec2 cell = i + vec2(x, y);
+        // hash cell to a random point inside it
+        vec2 point = cell + fract(sin(cell * vec2(127.1,311.7)) * 43758.5);
+        minDist = min(minDist, distance(p, point));
+    }
+    return minDist; // F1
+}</code></pre>
+
+  <div class="engine-note"><strong>🎮 Engine use:</strong> fBm over Perlin/Simplex is the go-to for terrain heightmaps, cloud density fields, and procedural textures. Domain warping creates organic shapes that look naturally eroded. Worley noise is used for cell patterns, procedural rock, and as a lookup into volume textures for fire and smoke in Unreal/Unity VFX graphs. All noise types are trivially tileable by using tiling hash functions — essential for seamless textures.</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ CH19: PHYSICS ══ -->
+<div class="chapter" id="ch-physics">
+  <div class="ch-head"><span class="ch-num">CHAPTER 19</span><h2 class="ch-title">Physics Simulation Math</h2></div>
+  <p class="ch-desc">The mathematics underlying rigid body dynamics, collision response, and numerical integration — the core of any physics engine from a simple game to a full simulation.</p>
+
+  <h3 id="phys-rigidbody">Rigid Body Dynamics</h3>
+  <p>A rigid body has both <strong>linear</strong> (translation) and <strong>angular</strong> (rotation) degrees of freedom. Six total in 3D.</p>
+
+  <h4>Linear Motion</h4>
+  <div class="fg">
+    <div class="fi"><div class="fn">Newton's 2nd law</div>$$\mathbf{F}=m\mathbf{a},\quad\mathbf{a}=\frac{\mathbf{F}}{m}$$</div>
+    <div class="fi"><div class="fn">Linear momentum</div>$$\mathbf{p}=m\mathbf{v},\quad\mathbf{F}=\frac{d\mathbf{p}}{dt}$$</div>
+    <div class="fi"><div class="fn">Velocity update</div>$$\mathbf{v}(t+dt)=\mathbf{v}(t)+\mathbf{a}\cdot dt$$</div>
+    <div class="fi"><div class="fn">Position update</div>$$\mathbf{x}(t+dt)=\mathbf{x}(t)+\mathbf{v}\cdot dt$$</div>
+  </div>
+
+  <h4>Angular Motion</h4>
+  <div class="fg">
+    <div class="fi"><div class="fn">Torque</div>$$\boldsymbol{\tau}=\mathbf{r}\times\mathbf{F}$$<p style="font-size:11px;color:var(--text3);margin-top:4px">r = moment arm (point of force application − center of mass)</p></div>
+    <div class="fi"><div class="fn">Angular momentum</div>$$\mathbf{L}=I\boldsymbol{\omega},\quad\boldsymbol{\tau}=\frac{d\mathbf{L}}{dt}$$</div>
+    <div class="fi"><div class="fn">Angular acceleration</div>$$\boldsymbol{\alpha}=I^{-1}\boldsymbol{\tau}$$</div>
+    <div class="fi"><div class="fn">Angular velocity update</div>$$\boldsymbol{\omega}(t+dt)=\boldsymbol{\omega}(t)+\boldsymbol{\alpha}\cdot dt$$</div>
+    <div class="fi"><div class="fn">Orientation update (quaternion)</div>$$\dot{q}=\frac{1}{2}\begin{bmatrix}0\\\boldsymbol{\omega}\end{bmatrix}q$$<p style="font-size:11px;color:var(--text3);margin-top:4px">Integrate then re-normalize q each frame</p></div>
+    <div class="fi"><div class="fn">Velocity at point on body</div>$$\mathbf{v}_p=\mathbf{v}_{cm}+\boldsymbol{\omega}\times\mathbf{r}$$<p style="font-size:11px;color:var(--text3);margin-top:4px">r = point − center of mass. Critical for collision response.</p></div>
+  </div>
+
+  <h4>Inertia Tensor</h4>
+  <p>The rotational equivalent of mass — a 3×3 symmetric matrix that describes how mass is distributed relative to the rotation axes. In body space (diagonal for symmetric objects):</p>
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d"></span>Solid Sphere (radius r, mass m)</div>$$I=\frac{2}{5}mr^2\,I_3$$</div>
+    <div class="card"><div class="ct"><span class="d g"></span>Solid Box (half-extents a,b,c)</div>$$I_{xx}=\frac{m}{3}(b^2+c^2),\quad I_{yy}=\frac{m}{3}(a^2+c^2),\quad I_{zz}=\frac{m}{3}(a^2+b^2)$$</div>
+    <div class="card"><div class="ct"><span class="d p"></span>Solid Cylinder (radius r, height h)</div>$$I_{xx}=I_{yy}=\frac{m}{12}(3r^2+h^2),\quad I_{zz}=\frac{1}{2}mr^2$$</div>
+    <div class="card"><div class="ct"><span class="d y"></span>Inertia in world space</div>$$I_{world}=RI_{body}R^T$$<p style="font-size:12px;color:var(--text2);margin-top:6px">R = current rotation matrix of body. Must update every frame.</p></div>
+  </div>
+
+  <div class="notice tip"><span class="ni2">🎮</span>In practice, store the <strong>inverse inertia tensor</strong> in body space and compute the world-space inverse each frame as I⁻¹_world = R · I⁻¹_body · Rᵀ. This avoids inverting a matrix per frame.</div>
+
+  <h3 id="phys-integration">Numerical Integration Methods</h3>
+  <p>Physics simulation advances state forward in time by discrete steps dt. The integration method determines accuracy, stability, and energy conservation.</p>
+
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d r"></span>Explicit Euler (avoid for physics)</div>
+    $$\mathbf{v}_{n+1}=\mathbf{v}_n+\mathbf{a}_n\cdot dt$$
+    $$\mathbf{x}_{n+1}=\mathbf{x}_n+\mathbf{v}_n\cdot dt$$
+    <p style="font-size:12px;color:var(--text2);margin-top:6px">O(dt) accuracy. Energy-gaining — unstable. Never use for real physics.</p></div>
+
+    <div class="card"><div class="ct"><span class="d g"></span>Semi-implicit (Symplectic) Euler ✓</div>
+    $$\mathbf{v}_{n+1}=\mathbf{v}_n+\mathbf{a}_n\cdot dt$$
+    $$\mathbf{x}_{n+1}=\mathbf{x}_n+\mathbf{v}_{n+1}\cdot dt$$
+    <p style="font-size:12px;color:var(--text2);margin-top:6px">O(dt) accuracy. Energy-<em>conserving</em> for conservative forces. Used in most game engines (Bullet, PhysX default). Simple to implement.</p></div>
+
+    <div class="card"><div class="ct"><span class="d p"></span>Verlet Integration ✓</div>
+    $$\mathbf{x}_{n+1}=2\mathbf{x}_n-\mathbf{x}_{n-1}+\mathbf{a}_n\cdot dt^2$$
+    <p style="font-size:12px;color:var(--text2);margin-top:6px">O(dt²) accuracy. Time-reversible, good energy conservation. No explicit velocity — derive as v ≈ (x_{n+1}−x_{n−1})/(2dt). Used in cloth, particles, rope.</p></div>
+
+    <div class="card"><div class="ct"><span class="d t"></span>Velocity Verlet ✓✓</div>
+    $$\mathbf{x}_{n+1}=\mathbf{x}_n+\mathbf{v}_n dt+\tfrac{1}{2}\mathbf{a}_n dt^2$$
+    $$\mathbf{v}_{n+1}=\mathbf{v}_n+\tfrac{1}{2}(\mathbf{a}_n+\mathbf{a}_{n+1})dt$$
+    <p style="font-size:12px;color:var(--text2);margin-top:6px">O(dt²). Keeps explicit velocity. Symplectic. Better than basic Verlet for variable forces. Good default for rigid bodies.</p></div>
+  </div>
+
+  <h4>Runge-Kutta 4 (RK4)</h4>
+  <p>Fourth-order accuracy O(dt⁴). Evaluates derivatives 4 times per step. High accuracy for smooth forces — used in flight simulators, orbital mechanics, and any simulation where accuracy matters more than speed.</p>
+  <div class="mb"><div class="lbl">RK4</div>
+  $$k_1=f(t_n,\,y_n),\quad k_2=f\!\left(t_n+\frac{dt}{2},\,y_n+\frac{dt}{2}k_1\right)$$
+  $$k_3=f\!\left(t_n+\frac{dt}{2},\,y_n+\frac{dt}{2}k_2\right),\quad k_4=f(t_n+dt,\,y_n+dt\,k_3)$$
+  $$y_{n+1}=y_n+\frac{dt}{6}(k_1+2k_2+2k_3+k_4)$$</div>
+
+  <div class="tw"><table>
+    <tr><th>Method</th><th>Order</th><th>Evals/step</th><th>Energy</th><th>Use case</th></tr>
+    <tr><td>Explicit Euler</td><td>1</td><td>1</td><td>Gains — unstable</td><td>Never</td></tr>
+    <tr><td>Semi-implicit Euler</td><td>1</td><td>1</td><td>Conserves</td><td>Game physics (default)</td></tr>
+    <tr><td>Velocity Verlet</td><td>2</td><td>2</td><td>Conserves</td><td>Rigid bodies, molecular</td></tr>
+    <tr><td>RK4</td><td>4</td><td>4</td><td>Slight drift</td><td>High-accuracy simulation</td></tr>
+  </table></div>
+
+  <h3 id="phys-collision">Collision Response — Impulse Method</h3>
+  <p>When two bodies collide, apply an <strong>impulse</strong> (instantaneous change in momentum) to both bodies to separate them and model the bounce.</p>
+
+  <h4>Coefficient of Restitution</h4>
+  <div class="fg">
+    <div class="fi"><div class="fn">Restitution e</div>$$e\in[0,1],\quad e=0\text{ perfectly inelastic},\quad e=1\text{ perfectly elastic}$$</div>
+    <div class="fi"><div class="fn">Relative velocity at contact</div>$$v_{rel}=(\mathbf{v}_A+\boldsymbol{\omega}_A\times\mathbf{r}_A-\mathbf{v}_B-\boldsymbol{\omega}_B\times\mathbf{r}_B)\cdot\hat{\mathbf{n}}$$</div>
+  </div>
+
+  <div class="mb"><div class="lbl">IMPULSE MAGNITUDE</div>
+  $$J=\frac{-(1+e)\,v_{rel}}{\frac{1}{m_A}+\frac{1}{m_B}+\hat{\mathbf{n}}\cdot\bigl(I_A^{-1}(\mathbf{r}_A\times\hat{\mathbf{n}})\times\mathbf{r}_A+I_B^{-1}(\mathbf{r}_B\times\hat{\mathbf{n}})\times\mathbf{r}_B\bigr)}$$
+  <p style="font-size:11px;color:var(--text3);margin-top:6px">n̂ = contact normal (from B to A). r_A, r_B = contact point − center of mass for each body.</p></div>
+
+  <h4>Applying the Impulse</h4>
+  <div class="fg">
+    <div class="fi"><div class="fn">Linear velocity change</div>$$\mathbf{v}_A\mathrel{+}=\frac{J}{m_A}\hat{\mathbf{n}},\quad\mathbf{v}_B\mathrel{-}=\frac{J}{m_B}\hat{\mathbf{n}}$$</div>
+    <div class="fi"><div class="fn">Angular velocity change</div>$$\boldsymbol{\omega}_A\mathrel{+}=I_A^{-1}(\mathbf{r}_A\times J\hat{\mathbf{n}})$$$$\boldsymbol{\omega}_B\mathrel{-}=I_B^{-1}(\mathbf{r}_B\times J\hat{\mathbf{n}})$$</div>
+  </div>
+
+  <h4>Friction Impulse</h4>
+  <p>Apply a second impulse tangent to the contact surface to simulate friction (Coulomb model):</p>
+  <div class="mb">
+  $$\mathbf{t}=\text{normalize}(v_{rel,tangent}),\quad J_t=\text{clamp}\!\left(\frac{-v_{rel,tan}}{\frac{1}{m_A}+\frac{1}{m_B}+\ldots},\,-\mu J,\,\mu J\right)$$
+  <p style="font-size:11px;color:var(--text3);margin-top:6px">μ = friction coefficient. Clamp by μJ to enforce Coulomb's law: friction ≤ μ × normal force.</p></div>
+
+  <h4>Position Correction (Penetration Resolution)</h4>
+  <p>Bodies can overlap slightly due to discrete time steps. Fix with <strong>Baumgarte stabilization</strong> or <strong>positional correction</strong>:</p>
+  <div class="mb"><div class="lbl">BAUMGARTE</div>
+  $$\mathbf{v}_{correction}=\frac{\beta}{\Delta t}\max(d-\delta,0)\hat{\mathbf{n}}$$
+  <p style="font-size:11px;color:var(--text3);margin-top:6px">β ∈ [0.1, 0.8] = correction factor. d = penetration depth. δ = slop tolerance (e.g. 0.01). Add to relative velocity before computing impulse.</p></div>
+
+  <h3 id="phys-constraints">Constraints &amp; Joints</h3>
+  <p>Constraints limit degrees of freedom between bodies. Implemented as additional impulses each frame to satisfy the constraint equation C(x) = 0.</p>
+
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d"></span>Distance Constraint (rod)</div>
+    $$C=\|\mathbf{x}_A-\mathbf{x}_B\|-L=0$$
+    <p style="font-size:12px;color:var(--text2);margin-top:6px">Keeps two points exactly distance L apart. Used for rigid rods and simple joints.</p></div>
+    <div class="card"><div class="ct"><span class="d g"></span>Ball-and-Socket Joint</div>
+    $$C=\mathbf{x}_A+R_A\mathbf{r}_A-\mathbf{x}_B-R_B\mathbf{r}_B=0$$
+    <p style="font-size:12px;color:var(--text2);margin-top:6px">3 constraints (one per axis) — anchor points on both bodies must coincide. Allows all rotation, no translation.</p></div>
+    <div class="card"><div class="ct"><span class="d p"></span>Hinge Joint</div>
+    $$C_{pos}=0\text{ (ball-socket) },\quad C_{rot}:\text{ axis aligned}$$
+    <p style="font-size:12px;color:var(--text2);margin-top:6px">5 constraints — fixes position (3) and constrains rotation to one axis (2). Used for doors, wheels, elbows.</p></div>
+    <div class="card"><div class="ct"><span class="d y"></span>Spring (soft constraint)</div>
+    $$\mathbf{F}_{spring}=-k(\|\mathbf{x}_A-\mathbf{x}_B\|-L)\hat{\mathbf{d}}-c\,\mathbf{v}_{rel}$$
+    <p style="font-size:12px;color:var(--text2);margin-top:6px">k = stiffness, c = damping, L = rest length. Not a hard constraint — allows stretch. Used for cloth, hair, soft bodies.</p></div>
+  </div>
+
+  <h4>Position Based Dynamics (PBD)</h4>
+  <p>Alternative to impulse-based constraints — directly correct positions to satisfy constraints, then derive velocities. Used in Unity's cloth, Unreal's Chaos, and most modern real-time soft body systems.</p>
+  <ol class="steps">
+    <li>Integrate velocities and predict positions: x* = x + v·dt</li>
+    <li>For each constraint, compute position correction Δx that satisfies C(x*) = 0.</li>
+    <li>Apply corrections: x* += Δx weighted by inverse mass.</li>
+    <li>Update velocities from position change: v = (x* − x) / dt</li>
+  </ol>
+  <div class="notice success"><span class="ni2">💡</span>PBD is unconditionally stable regardless of stiffness — making it far more robust for real-time use than stiff spring ODEs. The tradeoff is that constraint stiffness depends on dt and iteration count rather than a physical parameter.</div>
+
+  <h3 id="phys-continuous">Continuous Collision Detection (CCD)</h3>
+  <p>Discrete collision checks can miss fast-moving objects that pass through thin geometry in a single frame (tunnelling). CCD sweeps the object's volume along its trajectory.</p>
+
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d y"></span>Swept Sphere</div>
+    <p style="font-size:12.5px">Replace the sphere at position x with a capsule from x(t) to x(t+dt). Intersect the capsule against the scene. Time of impact t* = first intersection along the sweep.</p></div>
+    <div class="card"><div class="ct"><span class="d t"></span>Linear Interpolation CCD</div>
+    <p style="font-size:12.5px">Binary search in t ∈ [0,1]: advance both bodies by lerp. Find the first t where the distance between them drops below threshold. O(log N) GJK queries.</p></div>
+  </div>
+
+  <div class="mb"><div class="lbl">TIME OF IMPACT (TOI)</div>
+  $$\text{TOI}=\min\{t\in[0,1]\;:\;\text{dist}(A(t),B(t))\leq0\}$$
+  <p style="font-size:11px;color:var(--text3);margin-top:6px">Once TOI is found: advance to t*, resolve collision, then continue simulation for the remaining (1−t*)·dt.</p></div>
+
+  <h4>Speculative Contacts</h4>
+  <p>A lighter-weight alternative to full CCD used by engines like Box2D and Unity's 2D physics: project the closest-feature distance along the relative velocity and add a constraint to prevent the gap from going negative in the next step. Cheaper than swept tests but can over-constrain fast objects.</p>
+
+  <div class="engine-note"><strong>🎮 Engine use:</strong> Semi-implicit Euler is the standard integrator for game rigid bodies (Bullet, PhysX, Havok). PBD is used for cloth and soft bodies (Unity Cloth, Unreal Chaos cloth). Impulse-based collision resolution is inside every major physics engine. CCD is toggled per-object in Unity (Continuous/Continuous Dynamic settings) and is essential for projectiles, fast vehicles, and thin walls. Understanding these fundamentals lets you tune physics engine parameters intelligently and implement custom physics components.</div>
 </div>
 
 </div><!-- /content-area -->
