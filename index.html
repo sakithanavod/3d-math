@@ -7,6 +7,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script>
+MathJax = {
+  tex: { inlineMath: [['$$','$$'],['\\(','\\)']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] },
+  chtml: { scale: 0.92, minScale: 0.6, matchFontHeight: false }
+};
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
 <style>
 :root{
@@ -70,18 +77,22 @@ p{color:var(--text2);font-size:13.5px;line-height:1.8;margin-bottom:10px}
 
 /* CARDS */
 .cg{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;margin-bottom:20px}
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:12px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:12px;overflow:hidden;min-width:0}
 .ct{font-size:12.5px;font-weight:700;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:7px}
 .ct .d{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0}
 .ct .d.g{background:var(--green)}.ct .d.y{background:var(--yellow)}.ct .d.p{background:var(--accent2)}.ct .d.t{background:var(--accent3)}.ct .d.r{background:var(--red)}
 
 /* MATH */
-.mb{background:var(--bg3);border:1px solid var(--border2);border-radius:9px;padding:16px 20px;margin:14px 0;overflow-x:auto;position:relative}
+.mb{background:var(--bg3);border:1px solid var(--border2);border-radius:9px;padding:16px 20px;margin:14px 0;overflow-x:auto;position:relative;word-break:break-word}
 .mb .lbl{position:absolute;top:-1px;right:10px;font-family:'JetBrains Mono',monospace;font-size:9px;background:var(--accent);color:#fff;padding:2px 7px;border-radius:0 0 5px 5px;font-weight:700;letter-spacing:.05em}
+.MathJax{max-width:100%;overflow-x:auto;overflow-y:hidden;display:block!important}
+mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden;display:block!important;padding-bottom:4px}
+mjx-container[display="true"]{margin:6px 0!important}
+.fi mjx-container, .card mjx-container{font-size:95%}
 
 /* FORMULA GRID */
 .fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;margin:12px 0}
-.fi{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.fi{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow:hidden;min-width:0}
 .fn{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
 
 /* NOTICES */
@@ -1221,7 +1232,8 @@ std::vector&lt;float&gt; buildArcLengthTable(auto& curve, int N=100) {
     <div class="card"><div class="ct"><span class="d t"></span>Torus (major R, minor r)</div>
     $$\mathbf{q}=\bigl(\|\mathbf{p}_{xz}\|-R,\;p_y\bigr),\quad\text{sdTorus}=\|\mathbf{q}\|-r$$</div>
     <div class="card"><div class="ct"><span class="d r"></span>Capsule (endpoints A,B, radius r)</div>
-    $$\mathbf{pa}=\mathbf{p}-A,\;\mathbf{ba}=B-A,\;t=\text{clamp}(\mathbf{pa}\cdot\mathbf{ba}/\mathbf{ba}\cdot\mathbf{ba},0,1)$$
+    $$\mathbf{pa}=\mathbf{p}-A,\quad\mathbf{ba}=B-A$$
+    $$t=\text{clamp}\!\left(\frac{\mathbf{pa}\cdot\mathbf{ba}}{\mathbf{ba}\cdot\mathbf{ba}},0,1\right)$$
     $$\text{sdCapsule}=\|\mathbf{pa}-t\cdot\mathbf{ba}\|-r$$</div>
   </div>
 
