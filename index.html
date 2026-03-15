@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Math — Complete Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root{
+  --bg:#0a0c10;--bg2:#0f1117;--bg3:#151820;--bg4:#1c2030;
+  --border:#252a38;--border2:#2e3547;
+  --accent:#5b8af5;--accent2:#7c6af5;--accent3:#4ecdc4;--accent4:#f5a845;
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;
+  --green:#4ade80;--red:#f87171;--yellow:#fbbf24;
+  --sw:290px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;display:flex;min-height:100vh;line-height:1.7}
+
+/* ── SIDEBAR ── */
+#sb{width:var(--sw);background:var(--bg2);border-right:1px solid var(--border);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;display:flex;flex-direction:column}
+#sb::-webkit-scrollbar{width:4px}
+#sb::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.sb-head{padding:20px 18px 16px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:1}
+.sb-logo{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--text3);margin-bottom:6px}
+.sb-title{font-size:16px;font-weight:800;color:var(--text)}
+.sb-title span{color:var(--accent)}
+.srch-w{padding:12px 14px;border-bottom:1px solid var(--border)}
+#srch{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:7px 10px 7px 30px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;transition:border-color .2s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:9px center}
+#srch:focus{border-color:var(--accent)}
+#srch::placeholder{color:var(--text3)}
+.nav-sec{padding:10px 0 4px}
+.nav-gl{padding:5px 14px 3px;font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--text3)}
+.ni{display:flex;align-items:center;gap:7px;padding:6px 14px;font-size:12.5px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s;border-left:2px solid transparent;text-decoration:none}
+.ni:hover{color:var(--text);background:var(--bg3)}
+.ni.active{color:var(--accent);border-left-color:var(--accent);background:rgba(91,138,245,.07)}
+.ni .num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);min-width:18px}
+.ns{padding-left:26px;font-size:11.5px;color:var(--text3)}
+.ns.active{color:var(--accent2);border-left-color:var(--accent2)}
+.ns:hover{color:var(--text2)}
+
+/* ── MAIN ── */
+#main{margin-left:var(--sw);flex:1;max-width:calc(100vw - var(--sw))}
+.hero{background:linear-gradient(135deg,var(--bg2) 0%,var(--bg3) 50%,var(--bg2) 100%);border-bottom:1px solid var(--border);padding:52px 60px 44px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(91,138,245,.12) 0%,transparent 70%);pointer-events:none}
+.hero::after{content:'∇';position:absolute;bottom:-20px;right:56px;font-size:180px;color:rgba(91,138,245,.04);font-weight:800;pointer-events:none}
+.badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:rgba(91,138,245,.12);border:1px solid rgba(91,138,245,.25);border-radius:20px;padding:3px 11px;margin-bottom:14px;letter-spacing:.05em}
+.hero h1{font-size:38px;font-weight:800;line-height:1.15;margin-bottom:10px}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{color:var(--text2);font-size:14px;max-width:560px;line-height:1.7}
+.hero-stats{display:flex;gap:28px;margin-top:28px}
+.stat{display:flex;flex-direction:column}
+.stat-n{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;color:var(--accent)}
+.stat-l{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em}
+
+/* ── CONTENT ── */
+.ca{padding:0 60px 80px}
+.chapter{padding-top:56px}
+.ch-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.ch-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);font-weight:500}
+.ch-title{font-size:24px;font-weight:800;color:var(--text)}
+.ch-desc{color:var(--text2);font-size:13.5px;margin-bottom:28px;max-width:680px;line-height:1.75;margin-top:7px}
+h3{font-size:16px;font-weight:700;color:var(--text);margin-bottom:10px;margin-top:28px;padding-left:10px;border-left:3px solid var(--accent)}
+h4{font-size:13px;font-weight:700;color:var(--accent3);margin-top:18px;margin-bottom:7px;text-transform:uppercase;letter-spacing:.05em}
+p{color:var(--text2);font-size:13.5px;line-height:1.8;margin-bottom:10px}
+.divider{height:1px;background:var(--border);margin:44px 0}
+
+/* CARDS */
+.cg{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;margin-bottom:20px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:12px}
+.ct{font-size:12.5px;font-weight:700;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.ct .d{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.ct .d.g{background:var(--green)}.ct .d.y{background:var(--yellow)}.ct .d.p{background:var(--accent2)}.ct .d.t{background:var(--accent3)}.ct .d.r{background:var(--red)}
+
+/* MATH */
+.mb{background:var(--bg3);border:1px solid var(--border2);border-radius:9px;padding:16px 20px;margin:14px 0;overflow-x:auto;position:relative}
+.mb .lbl{position:absolute;top:-1px;right:10px;font-family:'JetBrains Mono',monospace;font-size:9px;background:var(--accent);color:#fff;padding:2px 7px;border-radius:0 0 5px 5px;font-weight:700;letter-spacing:.05em}
+
+/* FORMULA GRID */
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;margin:12px 0}
+.fi{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.fn{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+
+/* NOTICES */
+.notice{border-radius:7px;padding:10px 14px;font-size:13px;line-height:1.6;margin:12px 0;display:flex;gap:9px}
+.ni2{font-size:15px;flex-shrink:0;margin-top:1px}
+.info{background:rgba(91,138,245,.08);border-left:3px solid var(--accent);color:var(--text2)}
+.success{background:rgba(74,222,128,.07);border-left:3px solid var(--green);color:var(--text2)}
+.warning{background:rgba(251,191,36,.07);border-left:3px solid var(--yellow);color:var(--text2)}
+.tip{background:rgba(78,205,196,.07);border-left:3px solid var(--accent3);color:var(--text2)}
+.danger{background:rgba(248,113,113,.07);border-left:3px solid var(--red);color:var(--text2)}
+
+/* CODE */
+pre{background:var(--bg3);border:1px solid var(--border2);border-radius:9px;padding:14px 16px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.6;color:var(--text);margin:12px 0}
+code{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--accent3);background:rgba(78,205,196,.1);padding:1px 5px;border-radius:3px}
+pre code{background:none;padding:0;color:inherit}
+
+/* TABLES */
+.tw{overflow-x:auto;margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{background:var(--bg3);color:var(--text);font-weight:700;padding:9px 12px;text-align:left;border-bottom:2px solid var(--border2);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top}
+tr:hover td{background:rgba(255,255,255,.015)}
+
+/* TAGS */
+.tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px;letter-spacing:.05em;margin-right:4px}
+.tb{background:rgba(91,138,245,.15);color:var(--accent);border:1px solid rgba(91,138,245,.25)}
+.tg{background:rgba(74,222,128,.1);color:var(--green);border:1px solid rgba(74,222,128,.2)}
+.tp{background:rgba(124,106,245,.15);color:var(--accent2);border:1px solid rgba(124,106,245,.25)}
+.tt{background:rgba(78,205,196,.1);color:var(--accent3);border:1px solid rgba(78,205,196,.2)}
+.to{background:rgba(245,168,69,.1);color:var(--accent4);border:1px solid rgba(245,168,69,.2)}
+
+/* PROS/CONS */
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.pros{background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);border-radius:7px;padding:12px}
+.cons{background:rgba(248,113,113,.05);border:1px solid rgba(248,113,113,.15);border-radius:7px;padding:12px}
+.pt{font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px}
+.ct2{font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px}
+.pros li,.cons li{font-size:12px;color:var(--text2);margin-left:13px;margin-bottom:3px}
+
+/* STEPS */
+.steps{counter-reset:step;list-style:none;margin:12px 0}
+.steps li{counter-increment:step;display:flex;gap:10px;align-items:flex-start;margin-bottom:9px;font-size:13px;color:var(--text2)}
+.steps li::before{content:counter(step);background:var(--accent);color:#fff;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;min-width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+
+/* LISTS */
+ul.cl,ol.cl{margin:8px 0 8px 16px}
+ul.cl li,ol.cl li{font-size:13px;color:var(--text2);margin-bottom:4px;line-height:1.65}
+
+/* MOBILE */
+#topbar{display:none;position:sticky;top:0;background:var(--bg2);border-bottom:1px solid var(--border);padding:11px 18px;z-index:90;justify-content:space-between;align-items:center}
+#menuBtn{background:none;border:1px solid var(--border2);color:var(--text);padding:5px 9px;border-radius:5px;cursor:pointer;font-family:inherit;font-size:12px}
+#overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99}
+@media(max-width:768px){
+  :root{--sw:0px}
+  #sb{transform:translateX(-290px);width:290px;transition:transform .25s}
+  #sb.open{transform:translateX(0)}
+  #main{margin-left:0;max-width:100vw}
+  .hero{padding:28px 20px 24px}
+  .hero h1{font-size:24px}
+  .ca{padding:0 20px 56px}
+  #topbar{display:flex}
+  #overlay.show{display:block}
+  .pc{grid-template-columns:1fr}
+}
+
+/* PROGRESS */
+#prog{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:200;transition:width .1s;width:0%}
+
+/* ENGINE NOTE styling */
+.engine-note{background:rgba(245,168,69,.06);border:1px solid rgba(245,168,69,.2);border-radius:8px;padding:12px 16px;margin:14px 0;font-size:13px;color:var(--text2)}
+.engine-note strong{color:var(--accent4)}
+
+/* CONVERSION DIAGRAM */
+.conv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:14px 0}
+.conv-item{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.conv-from{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:2px}
+.conv-to{font-size:12px;font-weight:700;color:var(--accent4);margin-bottom:8px}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+
+<div id="topbar">
+  <span style="font-weight:800;font-size:14px;">3D Math <em style="color:var(--accent);font-style:normal;">Ref</em></span>
+  <button id="menuBtn" onclick="toggleMenu()">☰ Menu</button>
+</div>
+<div id="overlay" onclick="toggleMenu()"></div>
+
+<!-- ══════════ SIDEBAR ══════════ -->
+<nav id="sb">
+  <div class="sb-head">
+    <div class="sb-logo">CG Math Series</div>
+    <div class="sb-title">3D Math <span>Reference</span></div>
+  </div>
+  <div class="srch-w"><input type="text" id="srch" placeholder="Search topics…" oninput="filterNav(this.value)"></div>
+  <div class="nav-sec" id="navList">
+    <div class="nav-gl">Foundations</div>
+    <a class="ni" href="#ch-vectors" onclick="closeMenu()"><span class="num">01</span>Vectors &amp; Points</a>
+    <a class="ni ns" href="#vec-arith" onclick="closeMenu()">— Arithmetic</a>
+    <a class="ni ns" href="#dot" onclick="closeMenu()">— Dot Product</a>
+    <a class="ni ns" href="#cross" onclick="closeMenu()">— Cross Product</a>
+    <a class="ni" href="#ch-trig" onclick="closeMenu()"><span class="num">02</span>Trigonometry</a>
+    <a class="ni ns" href="#trig-ids" onclick="closeMenu()">— Identities</a>
+    <a class="ni ns" href="#atan2" onclick="closeMenu()">— atan2</a>
+    <a class="ni" href="#ch-polar" onclick="closeMenu()"><span class="num">03</span>Polar &amp; Spherical Coords</a>
+    <a class="ni ns" href="#polar2d" onclick="closeMenu()">— 2D Polar</a>
+    <a class="ni ns" href="#cylindrical" onclick="closeMenu()">— Cylindrical</a>
+    <a class="ni ns" href="#spherical" onclick="closeMenu()">— Spherical</a>
+    <div class="nav-gl" style="margin-top:6px">Matrices</div>
+    <a class="ni" href="#ch-matrices" onclick="closeMenu()"><span class="num">04</span>Intro to Matrices</a>
+    <a class="ni ns" href="#mat-ops" onclick="closeMenu()">— Operations</a>
+    <a class="ni ns" href="#linear-tf" onclick="closeMenu()">— Linear Transforms</a>
+    <a class="ni" href="#ch-det" onclick="closeMenu()"><span class="num">05</span>Determinants</a>
+    <a class="ni" href="#ch-inv" onclick="closeMenu()"><span class="num">06</span>Inverse &amp; Orthogonal</a>
+    <a class="ni ns" href="#gram" onclick="closeMenu()">— Gram-Schmidt</a>
+    <a class="ni ns" href="#homog" onclick="closeMenu()">— Homogeneous Coords</a>
+    <div class="nav-gl" style="margin-top:6px">Transforms</div>
+    <a class="ni" href="#ch-tf" onclick="closeMenu()"><span class="num">07</span>Linear Transforms</a>
+    <a class="ni ns" href="#rot2d" onclick="closeMenu()">— 2D Rotation</a>
+    <a class="ni ns" href="#rot3d" onclick="closeMenu()">— 3D Rotation</a>
+    <a class="ni ns" href="#rodrigues" onclick="closeMenu()">— Rodrigues Formula</a>
+    <a class="ni ns" href="#scale" onclick="closeMenu()">— Scale</a>
+    <a class="ni ns" href="#reflection" onclick="closeMenu()">— Reflection</a>
+    <a class="ni ns" href="#shear" onclick="closeMenu()">— Shearing</a>
+    <a class="ni ns" href="#projection" onclick="closeMenu()">— Orthographic Projection</a>
+    <a class="ni ns" href="#affine" onclick="closeMenu()">— Affine Transforms</a>
+    <div class="nav-gl" style="margin-top:6px">Spaces &amp; Orientation</div>
+    <a class="ni" href="#ch-spaces" onclick="closeMenu()"><span class="num">08</span>Coordinate Spaces</a>
+    <a class="ni" href="#ch-orient" onclick="closeMenu()"><span class="num">09</span>Orientation in 3D</a>
+    <a class="ni ns" href="#euler" onclick="closeMenu()">— Euler Angles</a>
+    <a class="ni" href="#ch-quat" onclick="closeMenu()"><span class="num">10</span>Quaternions</a>
+    <a class="ni ns" href="#quat-ops" onclick="closeMenu()">— Operations</a>
+    <a class="ni ns" href="#slerp" onclick="closeMenu()">— SLERP</a>
+    <a class="ni" href="#ch-rotconv" onclick="closeMenu()"><span class="num">11</span>Rotation Conversions</a>
+    <a class="ni ns" href="#euler2mat" onclick="closeMenu()">— Euler ↔ Matrix</a>
+    <a class="ni ns" href="#quat2mat" onclick="closeMenu()">— Quat ↔ Matrix</a>
+    <a class="ni ns" href="#euler2quat" onclick="closeMenu()">— Euler ↔ Quat</a>
+    <div class="nav-gl" style="margin-top:6px">Geometry</div>
+    <a class="ni" href="#ch-geom" onclick="closeMenu()"><span class="num">12</span>Geometric Primitives</a>
+    <a class="ni ns" href="#repr" onclick="closeMenu()">— Representation Types</a>
+    <a class="ni ns" href="#lines" onclick="closeMenu()">— Lines, Rays &amp; Planes</a>
+    <a class="ni ns" href="#intersections" onclick="closeMenu()">— Intersections</a>
+    <div class="nav-gl" style="margin-top:6px">Engine / Game Dev</div>
+    <a class="ni" href="#ch-engine" onclick="closeMenu()"><span class="num">13</span>Engine Programming</a>
+    <a class="ni ns" href="#lookatfn" onclick="closeMenu()">— Look-At &amp; View Matrix</a>
+    <a class="ni ns" href="#projections" onclick="closeMenu()">— Perspective Projection</a>
+    <a class="ni ns" href="#normals" onclick="closeMenu()">— Normal Transforms</a>
+    <a class="ni ns" href="#lerp" onclick="closeMenu()">— Interpolation (LERP/SLERP)</a>
+    <a class="ni ns" href="#numstab" onclick="closeMenu()">— Numerical Stability</a>
+    <a class="ni ns" href="#aabb" onclick="closeMenu()">— AABB &amp; Bounding Volumes</a>
+    <a class="ni ns" href="#frustum" onclick="closeMenu()">— Frustum Culling</a>
+    <div class="nav-gl" style="margin-top:6px">Advanced Topics</div>
+    <a class="ni" href="#ch-bary" onclick="closeMenu()"><span class="num">14</span>Barycentric Coords</a>
+    <a class="ni ns" href="#bary-def" onclick="closeMenu()">— Definition &amp; Properties</a>
+    <a class="ni ns" href="#ray-tri" onclick="closeMenu()">— Ray-Triangle (Möller–Trumbore)</a>
+    <a class="ni ns" href="#bary-interp" onclick="closeMenu()">— Attribute Interpolation</a>
+    <a class="ni" href="#ch-curves" onclick="closeMenu()"><span class="num">15</span>Curves &amp; Splines</a>
+    <a class="ni ns" href="#bezier" onclick="closeMenu()">— Bézier Curves</a>
+    <a class="ni ns" href="#hermite" onclick="closeMenu()">— Hermite &amp; Catmull-Rom</a>
+    <a class="ni ns" href="#arclength" onclick="closeMenu()">— Arc Length</a>
+    <a class="ni" href="#ch-sdf" onclick="closeMenu()"><span class="num">16</span>Signed Distance Fields</a>
+    <a class="ni ns" href="#sdf-shapes" onclick="closeMenu()">— Primitive SDFs</a>
+    <a class="ni ns" href="#sdf-ops" onclick="closeMenu()">— Boolean Ops &amp; Blending</a>
+    <a class="ni ns" href="#sdf-normal" onclick="closeMenu()">— Normals &amp; Raymarching</a>
+    <a class="ni" href="#ch-pbr" onclick="closeMenu()"><span class="num">17</span>PBR Lighting Math</a>
+    <a class="ni ns" href="#render-eq" onclick="closeMenu()">— Rendering Equation</a>
+    <a class="ni ns" href="#brdf" onclick="closeMenu()">— BRDF &amp; Microfacet</a>
+    <a class="ni ns" href="#fresnel" onclick="closeMenu()">— Fresnel &amp; Schlick</a>
+    <a class="ni ns" href="#pbr-terms" onclick="closeMenu()">— D, F, G Terms</a>
+    <a class="ni" href="#ch-cheat" onclick="closeMenu()"><span class="num">⚡</span>Quick Cheatsheet</a>
+  </div>
+</nav>
+
+<!-- ══════════ MAIN ══════════ -->
+<main id="main">
+<div class="hero">
+  <div class="badge">Computer Graphics Math — Complete Reference</div>
+  <h1>3D Math <em>Reference Guide</em></h1>
+  <p>Vectors, matrices, transforms, quaternions, rotation conversions, polar/spherical coords, curves &amp; splines, signed distance fields, PBR lighting math, barycentric coordinates, and engine programming essentials.</p>
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-n">17</span><span class="stat-l">Chapters</span></div>
+    <div class="stat"><span class="stat-n">120+</span><span class="stat-l">Formulas</span></div>
+    <div class="stat"><span class="stat-n">PBR</span><span class="stat-l">Lighting Math</span></div>
+  </div>
+</div>
+
+<div class="ca">
+
+<!-- ══ CH01: VECTORS ══ -->
+<div class="chapter" id="ch-vectors">
+  <div class="ch-head"><span class="ch-num">CHAPTER 01</span><h2 class="ch-title">Vectors &amp; Points</h2></div>
+  <p class="ch-desc">The building blocks of all 3D math. Understanding the distinction between a point (location) and a vector (displacement) is fundamental.</p>
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d"></span>Point</div><p style="font-size:13px;margin:0">A location in space — has position, no direction or magnitude. Coordinates always relative to an origin.</p><div class="mb" style="margin-top:8px">$$P=(x,y,z)$$</div></div>
+    <div class="card"><div class="ct"><span class="d g"></span>Vector</div><p style="font-size:13px;margin:0">Has <strong>magnitude</strong> and <strong>direction</strong>, no fixed position. Describes displacement or direction.</p><div class="mb" style="margin-top:8px">$$\vec{v}=(v_x,v_y,v_z)$$</div></div>
+  </div>
+  <div class="notice success"><span class="ni2">💡</span>Subtracting two points gives a vector: <strong>b − a</strong> = vector from a to b. The point at the arrowhead always comes first in the subtraction.</div>
+
+  <h3 id="vec-arith">Arithmetic Operations</h3>
+  <div class="fg">
+    <div class="fi"><div class="fn">Scalar Multiplication</div>$$k\vec{v}=(kv_x,\;kv_y,\;kv_z)$$</div>
+    <div class="fi"><div class="fn">Addition</div>$$\vec{a}+\vec{b}=(a_x+b_x,\;a_y+b_y,\;a_z+b_z)$$</div>
+    <div class="fi"><div class="fn">Magnitude</div>$$\|\vec{v}\|=\sqrt{v_x^2+v_y^2+v_z^2}$$</div>
+    <div class="fi"><div class="fn">Normalization (unit vector)</div>$$\hat{v}=\frac{\vec{v}}{\|\vec{v}\|}$$</div>
+  </div>
+  <div class="notice info"><span class="ni2">ℹ️</span>A <strong>unit vector</strong> has magnitude = 1. Use it when you only care about direction, not length. Dot product of unit vectors directly gives cos θ.</div>
+
+  <h3 id="dot">Dot Product</h3>
+  <div class="fg">
+    <div class="fi"><div class="fn">Component form</div>$$\vec{a}\cdot\vec{b}=a_xb_x+a_yb_y+a_zb_z$$</div>
+    <div class="fi"><div class="fn">Geometric form</div>$$\vec{a}\cdot\vec{b}=\|\vec{a}\|\,\|\vec{b}\|\cos\theta$$</div>
+    <div class="fi"><div class="fn">Unit vectors only</div>$$\hat{a}\cdot\hat{b}=\cos\theta$$</div>
+    <div class="fi"><div class="fn">Self dot</div>$$\vec{a}\cdot\vec{a}=\|\vec{a}\|^2$$</div>
+    <div class="fi"><div class="fn">Projection of b onto â</div>$$b_\parallel=(\hat{a}\cdot\vec{b})\,\hat{a}$$</div>
+    <div class="fi"><div class="fn">Perpendicular component</div>$$b_\perp=\vec{b}-(\hat{a}\cdot\vec{b})\,\hat{a}$$</div>
+  </div>
+  <div class="tw"><table>
+    <tr><th>θ</th><th>dot (unit vecs)</th><th>Meaning</th></tr>
+    <tr><td>0°</td><td>1</td><td>Same direction</td></tr>
+    <tr><td>90°</td><td>0</td><td>Perpendicular</td></tr>
+    <tr><td>180°</td><td>-1</td><td>Opposite</td></tr>
+    <tr><td>&lt; 90°</td><td>&gt; 0</td><td>Generally same direction</td></tr>
+    <tr><td>&gt; 90°</td><td>&lt; 0</td><td>Generally opposite</td></tr>
+  </table></div>
+
+  <h3 id="cross">Cross Product (3D only)</h3>
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d p"></span>Component Form</div>
+    $$\vec{a}\times\vec{b}=\begin{pmatrix}a_yb_z-a_zb_y\\a_zb_x-a_xb_z\\a_xb_y-a_yb_x\end{pmatrix}$$</div>
+    <div class="card"><div class="ct"><span class="d t"></span>Magnitude</div>
+    $$\|\vec{a}\times\vec{b}\|=\|\vec{a}\|\,\|\vec{b}\|\sin\theta$$
+    <p style="font-size:12px;margin-top:8px;color:var(--text3)">= area of parallelogram formed by a and b</p></div>
+  </div>
+  <div class="notice tip"><span class="ni2">✋</span><strong>Right-hand rule</strong> (RH coords): fingers along a, curl toward b — thumb = direction of a×b. For LH coords use left hand. Sign of z-component indicates rotation direction: positive = CCW, negative = CW.</div>
+  <div class="notice warning"><span class="ni2">⚠️</span>Cross product is <strong>NOT commutative</strong>: a×b = −(b×a). Only defined in 3D.</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ CH02: TRIG ══ -->
+<div class="chapter" id="ch-trig">
+  <div class="ch-head"><span class="ch-num">CHAPTER 02</span><h2 class="ch-title">Trigonometry</h2></div>
+  <p class="ch-desc">Essential identities and the critically important atan2 used throughout all graphics code.</p>
+
+  <h3 id="trig-ids">Identities &amp; Conversions</h3>
+  <div class="fg">
+    <div class="fi"><div class="fn">Degrees → Radians</div>$$\theta_{rad}=\theta_{deg}\times\frac{\pi}{180}$$</div>
+    <div class="fi"><div class="fn">Radians → Degrees</div>$$\theta_{deg}=\theta_{rad}\times\frac{180}{\pi}$$</div>
+    <div class="fi"><div class="fn">Pythagorean</div>$$\sin^2\theta+\cos^2\theta=1$$</div>
+    <div class="fi"><div class="fn">Double angle</div>$$\sin 2\theta=2\sin\theta\cos\theta$$</div>
+    <div class="fi"><div class="fn">Sum (sin)</div>$$\sin(a+b)=\sin a\cos b+\cos a\sin b$$</div>
+    <div class="fi"><div class="fn">Sum (cos)</div>$$\cos(a+b)=\cos a\cos b-\sin a\sin b$$</div>
+  </div>
+
+  <div class="tw"><table>
+    <tr><th>Angle</th><th>sin</th><th>cos</th><th>tan</th></tr>
+    <tr><td>0°</td><td>0</td><td>1</td><td>0</td></tr>
+    <tr><td>30°</td><td>½</td><td>√3/2</td><td>1/√3</td></tr>
+    <tr><td>45°</td><td>√2/2</td><td>√2/2</td><td>1</td></tr>
+    <tr><td>60°</td><td>√3/2</td><td>½</td><td>√3</td></tr>
+    <tr><td>90°</td><td>1</td><td>0</td><td>∞</td></tr>
+    <tr><td>180°</td><td>0</td><td>-1</td><td>0</td></tr>
+  </table></div>
+
+  <h3 id="atan2">atan2(y, x)</h3>
+  <p>Returns the full-quadrant angle of point (x,y) from the +X axis. The most important angle function in graphics programming.</p>
+  <div class="notice warning"><span class="ni2">⚠️</span><strong>Never use atan(y/x)</strong> — only returns (−90°,90°), fails when x=0, can't distinguish opposite quadrants. Always use <code>atan2(y,x)</code>.</div>
+  <div class="mb"><div class="lbl">FORMULA</div>$$\theta=\text{atan2}(y,x),\quad\theta\in(-\pi,\pi]$$</div>
+  <div class="tw"><table>
+    <tr><th>Quadrant</th><th>x</th><th>y</th><th>Result</th></tr>
+    <tr><td>1st</td><td>&gt;0</td><td>&gt;0</td><td>0° → 90°</td></tr>
+    <tr><td>2nd</td><td>&lt;0</td><td>&gt;0</td><td>90° → 180°</td></tr>
+    <tr><td>3rd</td><td>&lt;0</td><td>&lt;0</td><td>−180° → −90°</td></tr>
+    <tr><td>4th</td><td>&gt;0</td><td>&lt;0</td><td>−90° → 0°</td></tr>
+  </table></div>
+<pre><code>double angle_rad = atan2(y, x);
+double angle_deg = angle_rad * 180.0 / M_PI;</code></pre>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ CH03: POLAR ══ -->
+<div class="chapter" id="ch-polar">
+  <div class="ch-head"><span class="ch-num">CHAPTER 03</span><h2 class="ch-title">Polar &amp; Spherical Coordinates</h2></div>
+  <p class="ch-desc">Alternative coordinate systems that are natural for describing rotations, spherical distributions, and angular quantities common in shaders and physics.</p>
+
+  <h3 id="polar2d">2D Polar Coordinates</h3>
+  <p>A point is described by a <strong>distance r</strong> from the origin and an <strong>angle θ</strong> from the polar axis (+X). Positive θ = counterclockwise.</p>
+
+  <div class="fg">
+    <div class="fi"><div class="fn">Cartesian → Polar</div>$$r=\sqrt{x^2+y^2},\quad\theta=\text{atan2}(y,x)$$</div>
+    <div class="fi"><div class="fn">Polar → Cartesian</div>$$x=r\cos\theta,\quad y=r\sin\theta$$</div>
+  </div>
+
+  <h4>Aliasing in Polar Coordinates</h4>
+  <p>Any point has <strong>infinitely many</strong> polar representations due to angle periodicity and negative radius. All aliases of (r, θ) are:</p>
+  <div class="mb">$$\bigl((-1)^n r,\;\theta+n\cdot 2\pi\bigr),\quad n\in\mathbb{Z}$$</div>
+  <div class="notice info"><span class="ni2">ℹ️</span><strong>Canonical form</strong>: enforce r ≥ 0, θ ∈ [0, 2π). If r &lt; 0 → r = |r|, θ = θ + π. Then normalize θ = θ mod 2π.</div>
+
+  <h3 id="cylindrical">Cylindrical Coordinates (r, θ, z)</h3>
+  <p>Extends 2D polar by adding a linear z-axis perpendicular to the polar plane. Used for objects with rotational symmetry around an axis.</p>
+  <div class="fg">
+    <div class="fi"><div class="fn">Cartesian → Cylindrical</div>$$r=\sqrt{x^2+y^2},\;\theta=\text{atan2}(y,x),\;z=z$$</div>
+    <div class="fi"><div class="fn">Cylindrical → Cartesian</div>$$x=r\cos\theta,\;y=r\sin\theta,\;z=z$$</div>
+  </div>
+  <div class="notice success"><span class="ni2">💡</span>The z-coordinate is identical in both systems — only the horizontal (x, y) part is converted.</div>
+
+  <h3 id="spherical">Spherical Coordinates (r, θ, φ)</h3>
+  <p>Describes a point with <strong>r</strong> (radial distance), <strong>θ</strong> (azimuthal angle, longitude), and <strong>φ</strong> (polar angle from +Z, latitude). Widely used in environment maps, light distribution, and sky models.</p>
+
+  <div class="fg">
+    <div class="fi"><div class="fn">Spherical → Cartesian</div>$$x=r\sin\phi\cos\theta,\quad y=r\sin\phi\sin\theta,\quad z=r\cos\phi$$</div>
+    <div class="fi"><div class="fn">Cartesian → Spherical</div>$$r=\sqrt{x^2+y^2+z^2},\quad\theta=\text{atan2}(y,x),\quad\phi=\arccos\!\left(\frac{z}{r}\right)$$</div>
+  </div>
+
+  <div class="tw"><table>
+    <tr><th>Canonical Range</th><th>Value</th></tr>
+    <tr><td>r (radius)</td><td>r ≥ 0</td></tr>
+    <tr><td>θ (azimuth / longitude)</td><td>[0, 2π)</td></tr>
+    <tr><td>φ (polar / inclination)</td><td>[0, π]</td></tr>
+  </table></div>
+
+  <h4>Parametric Sphere from Spherical Coords</h4>
+  <div class="mb">$$\text{vertex}(\theta,\phi)=\bigl(r\sin\phi\cos\theta,\;r\sin\phi\sin\theta,\;r\cos\phi\bigr)$$<p style="font-size:11px;color:var(--text3);margin-top:6px">θ ∈ [0, 2π], φ ∈ [0, π] — standard UV sphere generation formula</p></div>
+
+  <div class="engine-note"><strong>🎮 Engine use:</strong> Spherical coordinates appear in environment map UVs, area light sampling, skybox generation, and any algorithm sampling directions on a sphere (e.g., ambient occlusion, PBR IBL).</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ CH04: MATRICES ══ -->
+<div class="chapter" id="ch-matrices">
+  <div class="ch-head"><span class="ch-num">CHAPTER 04</span><h2 class="ch-title">Introduction to Matrices</h2></div>
+  <p class="ch-desc">A matrix is a rectangular grid of numbers. In 3D graphics, matrices primarily describe coordinate space transformations.</p>
+
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d"></span>Identity Matrix I₃</div>$$I_3=\begin{bmatrix}1&0&0\\0&1&0\\0&0&1\end{bmatrix}$$</div>
+    <div class="card"><div class="ct"><span class="d g"></span>Transpose: swap rows ↔ cols</div>$$(M^T)_{ij}=M_{ji}$$ <p style="font-size:12px;color:var(--text3);margin-top:6px">Diagonal matrices satisfy D = Dᵀ</p></div>
+  </div>
+
+  <h3 id="mat-ops">Matrix Multiplication</h3>
+  <p>An r×n matrix A times an n×c matrix B = r×c result. Inner dimensions must match.</p>
+  <div class="fg">
+    <div class="fi"><div class="fn">Non-commutative</div>$$AB\neq BA$$</div>
+    <div class="fi"><div class="fn">Associative</div>$$(AB)C=A(BC)$$</div>
+    <div class="fi"><div class="fn">Transpose of product</div>$$(AB)^T=B^TA^T$$</div>
+  </div>
+  <div class="notice warning"><span class="ni2">⚠️</span>Order matters. Always be explicit about which convention (row-major / column-major) and which coordinate system you are using.</div>
+
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d"></span>Row Vector (DirectX / HLSL)</div><p style="font-size:12.5px">Vector on left: <strong>vABC</strong> applies A first, then B, then C (left-to-right).</p></div>
+    <div class="card"><div class="ct"><span class="d g"></span>Column Vector (OpenGL / GLSL)</div><p style="font-size:12.5px">Vector on right: <strong>CBAv</strong> applies A first, then B, then C (right-to-left).</p></div>
+  </div>
+
+  <h3 id="linear-tf">Geometric Interpretation — Basis Vectors</h3>
+  <p>Each <strong>row</strong> (row-vector convention) of a matrix is the transformed version of the corresponding basis vector. This is the key insight for understanding and constructing transformation matrices.</p>
+  <div class="notice success"><span class="ni2">🔑</span>To <strong>read</strong> a matrix: extract rows as transformed basis vectors. To <strong>build</strong> a matrix: figure out where basis vectors go, place them into the rows.</div>
+  <div class="card"><div class="ct"><span class="d y"></span>Example: 90° CCW rotation in 2D</div>
+  <p style="font-size:12.5px">x-axis [1,0] → [0,1] &nbsp;|&nbsp; y-axis [0,1] → [−1,0]</p>
+  $$T_{\text{rotate90}}=\begin{bmatrix}0&1\\-1&0\end{bmatrix}$$</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ CH05: DETERMINANTS ══ -->
+<div class="chapter" id="ch-det">
+  <div class="ch-head"><span class="ch-num">CHAPTER 05</span><h2 class="ch-title">Determinants</h2></div>
+  <p class="ch-desc">A scalar encoding how a transformation scales space and whether it flips orientation.</p>
+
+  <div class="fg">
+    <div class="fi"><div class="fn">2×2</div>$$\det\begin{bmatrix}a&b\\c&d\end{bmatrix}=ad-bc$$</div>
+    <div class="fi"><div class="fn">Cofactor</div>$$C_{ij}=(-1)^{i+j}\cdot M_{ij}$$</div>
+    <div class="fi"><div class="fn">Multiplicative</div>$$\det(AB)=\det(A)\cdot\det(B)$$</div>
+    <div class="fi"><div class="fn">Transpose</div>$$\det(M^T)=\det(M)$$</div>
+  </div>
+
+  <h4>3×3 Determinant (cofactor expansion on row 1)</h4>
+  <div class="mb">$$\det(M)=m_{11}(m_{22}m_{33}-m_{23}m_{32})-m_{12}(m_{21}m_{33}-m_{23}m_{31})+m_{13}(m_{21}m_{32}-m_{22}m_{31})$$</div>
+
+  <div class="tw"><table>
+    <tr><th>det(M)</th><th>Geometric meaning</th></tr>
+    <tr><td>= 1</td><td>Preserves area/volume and orientation (e.g. pure rotation)</td></tr>
+    <tr><td>&gt; 1</td><td>Space scaled up by that factor</td></tr>
+    <tr><td>0 &lt; det &lt; 1</td><td>Space scaled down</td></tr>
+    <tr><td>&lt; 0</td><td>Orientation reversed (reflection component present)</td></tr>
+    <tr><td>= 0</td><td>Singular — space collapsed; matrix not invertible</td></tr>
+  </table></div>
+  <h4>Key Properties</h4>
+  <ul class="cl"><li>Swapping two rows/columns negates the determinant</li><li>Any row of all zeros → det = 0</li><li>det(I) = 1</li><li>det(M⁻¹) = 1/det(M)</li></ul>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ CH06: INVERSE & ORTHOGONAL ══ -->
+<div class="chapter" id="ch-inv">
+  <div class="ch-head"><span class="ch-num">CHAPTER 06</span><h2 class="ch-title">Matrix Inverse &amp; Orthogonal Matrices</h2></div>
+  <p class="ch-desc">The inverse undoes a transformation. Orthogonal matrices (all rotation/reflection matrices) have the cheapest possible inverse.</p>
+
+  <div class="mb"><div class="lbl">DEFINITION</div>$$M\cdot M^{-1}=M^{-1}\cdot M=I$$</div>
+  <div class="notice info"><span class="ni2">ℹ️</span>Exists only if M is square and det(M) ≠ 0. Singular (det=0) → not invertible → rows/columns are linearly dependent.</div>
+
+  <h4>Inverse of a 2×2 Matrix</h4>
+  <div class="mb">$$M^{-1}=\frac{1}{ad-bc}\begin{bmatrix}d&-b\\-c&a\end{bmatrix}$$</div>
+
+  <h4>General Method — Adjugate/Classical Adjoint</h4>
+  <ol class="steps">
+    <li>Compute det(M). If = 0, no inverse exists.</li>
+    <li>Form the cofactor matrix C where C_{ij} = (−1)^(i+j) · det(submatrix removing row i, col j).</li>
+    <li>Transpose C to get adj(M) = Cᵀ.</li>
+    <li>Divide: M⁻¹ = adj(M) / det(M).</li>
+  </ol>
+
+  <h4>Important Inverse Properties</h4>
+  <div class="fg">
+    <div class="fi"><div class="fn">Inverse of inverse</div>$$(M^{-1})^{-1}=M$$</div>
+    <div class="fi"><div class="fn">Product inverse</div>$$(AB)^{-1}=B^{-1}A^{-1}$$</div>
+    <div class="fi"><div class="fn">Transpose inverse</div>$$(M^T)^{-1}=(M^{-1})^T$$</div>
+    <div class="fi"><div class="fn">Det of inverse</div>$$\det(M^{-1})=\frac{1}{\det(M)}$$</div>
+  </div>
+
+  <h3 id="gram">Orthogonal Matrices &amp; Gram-Schmidt</h3>
+  <p>An orthogonal matrix has rows (and columns) that are mutually orthonormal (perpendicular unit vectors).</p>
+  <div class="notice success"><span class="ni2">⚡</span>For orthogonal matrices: <strong>M⁻¹ = Mᵀ</strong>. Transposing is drastically cheaper than computing a full inverse. All pure rotation matrices are orthogonal.</div>
+  <div class="fg">
+    <div class="fi"><div class="fn">Key identity</div>$$QQ^T=Q^TQ=I$$</div>
+    <div class="fi"><div class="fn">Determinant</div>$$\det(Q)=\pm 1$$</div>
+    <div class="fi"><div class="fn">Preserves lengths</div>$$\|Qv\|=\|v\|$$</div>
+  </div>
+
+  <h4>Gram-Schmidt Orthogonalization</h4>
+  <p>Used to fix a matrix that has drifted from orthogonality due to floating-point error (<em>matrix creep</em>). Given row vectors v₁, v₂, v₃:</p>
+  <div class="mb"><div class="lbl">STEPS</div>
+  $$\mathbf{u}_1=\frac{\mathbf{v}_1}{\|\mathbf{v}_1\|}$$
+  $$\mathbf{u}_2=\text{normalize}\!\left(\mathbf{v}_2-(\mathbf{v}_2\cdot\mathbf{u}_1)\mathbf{u}_1\right)$$
+  $$\mathbf{u}_3=\text{normalize}\!\left(\mathbf{v}_3-(\mathbf{v}_3\cdot\mathbf{u}_1)\mathbf{u}_1-(\mathbf{v}_3\cdot\mathbf{u}_2)\mathbf{u}_2\right)$$</div>
+  <div class="engine-note"><strong>🎮 Engine use:</strong> Run Gram-Schmidt periodically on camera/bone matrices to prevent drift. Also used to build a tangent space (TBN matrix) for normal mapping from potentially non-orthogonal texture gradients.</div>
+
+  <h3 id="homog">Homogeneous Coordinates in Depth</h3>
+  <p>Extend 3D Cartesian (x,y,z) to (x,y,z,w) so that translation can be expressed as matrix multiplication.</p>
+  <div class="fg">
+    <div class="fi"><div class="fn">Point (position)</div>$$(x,y,z)\rightarrow(x,y,z,1)$$<p style="font-size:11px;color:var(--text3);margin-top:4px">Translation DOES apply</p></div>
+    <div class="fi"><div class="fn">Vector (direction)</div>$$(x,y,z)\rightarrow(x,y,z,0)$$<p style="font-size:11px;color:var(--text3);margin-top:4px">Translation does NOT apply</p></div>
+    <div class="fi"><div class="fn">Convert back (w≠1)</div>$$\left(\frac{x}{w},\frac{y}{w},\frac{z}{w}\right)$$<p style="font-size:11px;color:var(--text3);margin-top:4px">Perspective division</p></div>
+  </div>
+
+  <h4>Effect of the w Component</h4>
+  <div class="tw"><table>
+    <tr><th>w value</th><th>Effect after perspective divide</th><th>Use case</th></tr>
+    <tr><td>w = 1</td><td>No scaling change</td><td>Normal 3D point</td></tr>
+    <tr><td>w &gt; 1</td><td>Coordinates scale closer to origin</td><td>Perspective (near objects)</td></tr>
+    <tr><td>w &lt; 1</td><td>Coordinates scale away from origin</td><td>Perspective (far objects)</td></tr>
+    <tr><td>w = 0</td><td>Point at infinity — translation ignored</td><td>Direction vectors</td></tr>
+  </table></div>
+  <div class="notice success"><span class="ni2">🔑</span>The reason we use w=0 for direction vectors: when multiplied by a 4×4 transform matrix, the translation column has no effect on (x,y,z,0). This is correct — translating a direction makes no sense.</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ CH07: TRANSFORMS ══ -->
+<div class="chapter" id="ch-tf">
+  <div class="ch-head"><span class="ch-num">CHAPTER 07</span><h2 class="ch-title">Linear &amp; Affine Transforms</h2></div>
+  <p class="ch-desc">The full matrix toolkit: rotation, scale, reflection, shear, orthographic projection, and affine transforms with translation.</p>
+
+  <h3 id="rot2d">Rotation</h3>
+  <h4>2D Rotation Matrix</h4>
+  <div class="notice info"><span class="ni2">ℹ️</span>Convention: counterclockwise = positive angle.</div>
+  <div class="mb"><div class="lbl">2D ROTATION</div>$$R(\theta)=\begin{bmatrix}\cos\theta&\sin\theta\\-\sin\theta&\cos\theta\end{bmatrix}$$</div>
+
+  <h3 id="rot3d">3D Rotation — Cardinal Axes</h3>
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d"></span>X-axis</div>$$R_x(\theta)=\begin{bmatrix}1&0&0\\0&\cos\theta&\sin\theta\\0&-\sin\theta&\cos\theta\end{bmatrix}$$</div>
+    <div class="card"><div class="ct"><span class="d g"></span>Y-axis</div>$$R_y(\theta)=\begin{bmatrix}\cos\theta&0&-\sin\theta\\0&1&0\\\sin\theta&0&\cos\theta\end{bmatrix}$$</div>
+    <div class="card"><div class="ct"><span class="d p"></span>Z-axis</div>$$R_z(\theta)=\begin{bmatrix}\cos\theta&\sin\theta&0\\-\sin\theta&\cos\theta&0\\0&0&1\end{bmatrix}$$</div>
+  </div>
+  <p>In homogeneous 4×4 form, add a 4th row/column of the identity (0,0,0,1).</p>
+
+  <h3 id="rodrigues">Rotation about Arbitrary Axis — Rodrigues</h3>
+  <p>Rotate vector <strong>v</strong> about unit axis <strong>n̂</strong> by angle θ:</p>
+  <div class="mb"><div class="lbl">RODRIGUES FORMULA</div>$$\mathbf{v}'=\mathbf{v}\cos\theta+(\hat{n}\times\mathbf{v})\sin\theta+\hat{n}(\hat{n}\cdot\mathbf{v})(1-\cos\theta)$$</div>
+  <p>As a matrix (N = skew-symmetric matrix of n̂):</p>
+  <div class="fg">
+    <div class="fi"><div class="fn">Skew-symmetric N</div>$$N=\begin{bmatrix}0&-n_z&n_y\\n_z&0&-n_x\\-n_y&n_x&0\end{bmatrix}$$</div>
+    <div class="fi"><div class="fn">Rotation matrix</div>$$R=\cos\theta\,I+\sin\theta\,N+(1-\cos\theta)\hat{n}\hat{n}^T$$</div>
+  </div>
+  <div class="mb"><div class="lbl">EXPANDED</div>$$R(\hat{n},\theta)=\begin{pmatrix}\cos\theta+n_x^2(1-\cos\theta)&n_xn_y(1-\cos\theta)-n_z\sin\theta&n_xn_z(1-\cos\theta)+n_y\sin\theta\\n_yn_x(1-\cos\theta)+n_z\sin\theta&\cos\theta+n_y^2(1-\cos\theta)&n_yn_z(1-\cos\theta)-n_x\sin\theta\\n_zn_x(1-\cos\theta)-n_y\sin\theta&n_zn_y(1-\cos\theta)+n_x\sin\theta&\cos\theta+n_z^2(1-\cos\theta)\end{pmatrix}$$</div>
+
+  <h3 id="scale">Scale</h3>
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d y"></span>3D Scale (cardinal axes)</div>$$S(k_x,k_y,k_z)=\begin{bmatrix}k_x&0&0\\0&k_y&0\\0&0&k_z\end{bmatrix}$$</div>
+    <div class="card"><div class="ct"><span class="d t"></span>4×4 Scale (homogeneous)</div>$$S=\begin{bmatrix}s_x&0&0&0\\0&s_y&0&0\\0&0&s_z&0\\0&0&0&1\end{bmatrix}$$</div>
+  </div>
+  <h4>Scale in Arbitrary Direction n̂</h4>
+  <div class="mb">$$S(\hat{n},k)=\begin{bmatrix}1+(k-1)n_x^2&(k-1)n_xn_y&(k-1)n_xn_z\\(k-1)n_xn_y&1+(k-1)n_y^2&(k-1)n_yn_z\\(k-1)n_xn_z&(k-1)n_yn_z&1+(k-1)n_z^2\end{bmatrix}$$<p style="font-size:11px;color:var(--text3);margin-top:6px">Set k=−1 to get reflection across the plane perpendicular to n̂</p></div>
+  <p>Derived from: v' = v + (k−1)(v·n̂)n̂</p>
+
+  <h3 id="reflection">Reflection</h3>
+  <p>Flip an object across a line (2D) or plane (3D) through the origin. Equivalent to scale k = −1 along the normal direction.</p>
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d r"></span>2D Reflection (across line ⊥ to n̂)</div>$$R(\hat{n})=\begin{bmatrix}1-2n_x^2&-2n_xn_y\\-2n_xn_y&1-2n_y^2\end{bmatrix}=I-2\hat{n}\hat{n}^T$$</div>
+    <div class="card"><div class="ct"><span class="d r"></span>3D Reflection (across plane ⊥ to n̂)</div>$$R(\hat{n})=\begin{bmatrix}1-2n_x^2&-2n_xn_y&-2n_xn_z\\-2n_xn_y&1-2n_y^2&-2n_yn_z\\-2n_xn_z&-2n_yn_z&1-2n_z^2\end{bmatrix}$$</div>
+  </div>
+  <div class="notice info"><span class="ni2">ℹ️</span>Derivation: v' = v⊥ − v∥ = v − 2(v·n̂)n̂ = v − 2n̂n̂ᵀv = (I − 2n̂n̂ᵀ)v. det(R) = −1 (orientation flipped).</div>
+
+  <h3 id="shear">Shearing</h3>
+  <p>Adds a multiple of one coordinate to another. Preserves area/volume (det = 1) but distorts angles.</p>
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d p"></span>2D Shear along X</div>$$H_x(s)=\begin{bmatrix}1&s\\0&1\end{bmatrix},\quad x'=x+sy$$</div>
+    <div class="card"><div class="ct"><span class="d p"></span>2D Shear along Y</div>$$H_y(s)=\begin{bmatrix}1&0\\s&1\end{bmatrix},\quad y'=y+sx$$</div>
+    <div class="card"><div class="ct"><span class="d t"></span>3D Shear in XY-plane (z affected)</div>$$H_{xy}(s,t)=\begin{bmatrix}1&0&0\\0&1&0\\s&t&1\end{bmatrix},\quad z'=z+sx+ty$$</div>
+    <div class="card"><div class="ct"><span class="d t"></span>3D Shear in XZ-plane (y affected)</div>$$H_{xz}(s,t)=\begin{bmatrix}1&s&0\\0&1&0\\0&t&1\end{bmatrix}$$</div>
+  </div>
+
+  <h3 id="projection">Orthographic Projection</h3>
+  <p>Projects along an axis by zeroing out one component. det = 0 (singular — collapses a dimension). Cannot be undone.</p>
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d g"></span>Onto XY-plane (drop Z)</div>$$P_{xy}=\begin{bmatrix}1&0&0\\0&1&0\\0&0&0\end{bmatrix}$$</div>
+    <div class="card"><div class="ct"><span class="d g"></span>Onto XZ-plane (drop Y)</div>$$P_{xz}=\begin{bmatrix}1&0&0\\0&0&0\\0&0&1\end{bmatrix}$$</div>
+    <div class="card"><div class="ct"><span class="d"></span>Onto arbitrary plane (⊥ to n̂)</div>$$P(\hat{n})=\begin{bmatrix}1-n_x^2&-n_xn_y&-n_xn_z\\-n_xn_y&1-n_y^2&-n_yn_z\\-n_xn_z&-n_yn_z&1-n_z^2\end{bmatrix}$$</div>
+  </div>
+
+  <h3 id="affine">Affine Transforms</h3>
+  <p>Extend linear transforms by including translation. Require homogeneous coordinates and 4×4 matrices.</p>
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d"></span>Translation (4×4)</div>$$T=\begin{bmatrix}1&0&0&t_x\\0&1&0&t_y\\0&0&1&t_z\\0&0&0&1\end{bmatrix}$$</div>
+    <div class="card"><div class="ct"><span class="d g"></span>General Affine</div>$$M=\begin{bmatrix}R_{3\times3}&\mathbf{t}\\0\;0\;0&1\end{bmatrix}$$</div>
+  </div>
+  <div class="notice success"><span class="ni2">🔑</span><strong>TRS Order</strong>: M = T · R · S (OpenGL/column-vector). Apply Scale first, then Rotate, then Translate. Rotating first keeps the pivot at the origin.</div>
+
+  <h4>Full MVP Pipeline</h4>
+  <div class="mb">$$\mathbf{v}_{clip}=P\cdot V\cdot M\cdot\mathbf{v}_{model}$$</div>
+  <div class="tw"><table>
+    <tr><th>Matrix</th><th>Space transition</th><th>Purpose</th></tr>
+    <tr><td>M (Model)</td><td>Object → World</td><td>Position/orient object in scene</td></tr>
+    <tr><td>V (View)</td><td>World → Camera</td><td>Camera position and orientation</td></tr>
+    <tr><td>P (Projection)</td><td>Camera → Clip</td><td>Perspective or orthographic</td></tr>
+  </table></div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ CH08: COORDINATE SPACES ══ -->
+<div class="chapter" id="ch-spaces">
+  <div class="ch-head"><span class="ch-num">CHAPTER 08</span><h2 class="ch-title">Coordinate Spaces</h2></div>
+  <p class="ch-desc">Understanding multiple coordinate systems is fundamental to rendering, physics, animation, and all 3D engine work.</p>
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d"></span>World Space</div><p style="font-size:12.5px">Global reference frame. All other spaces are expressed relative to it.</p></div>
+    <div class="card"><div class="ct"><span class="d g"></span>Object / Local Space</div><p style="font-size:12.5px">Each object's own axes. "Forward", "up", "right" are object-space concepts. Moves/rotates with the object.</p></div>
+    <div class="card"><div class="ct"><span class="d p"></span>Camera / View Space</div><p style="font-size:12.5px">Camera at origin. +X right, +Y up. OpenGL: −Z forward. DirectX: +Z forward.</p></div>
+    <div class="card"><div class="ct"><span class="d y"></span>Upright Space</div><p style="font-size:12.5px">Axes parallel to world, origin at object position. Object→Upright = rotate only. Upright→World = translate only.</p></div>
+    <div class="card"><div class="ct"><span class="d t"></span>Clip Space</div><p style="font-size:12.5px">After projection matrix. NDC after perspective divide. Geometry outside [-1,1]³ is clipped.</p></div>
+    <div class="card"><div class="ct"><span class="d r"></span>Screen Space</div><p style="font-size:12.5px">2D pixel coordinates after viewport transform. Final rasterization space.</p></div>
+  </div>
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d"></span>Left-Handed (Unity, Unreal, DirectX)</div><p style="font-size:12.5px">X: right, Y: up, Z: forward (away from you)</p></div>
+    <div class="card"><div class="ct"><span class="d g"></span>Right-Handed (OpenGL, Three.js, Godot, Blender)</div><p style="font-size:12.5px">X: right, Y: up, Z: backward (toward you)</p></div>
+  </div>
+  <div class="fg">
+    <div class="fi"><div class="fn">Object → World</div>$$\mathbf{v}_{world}=M\cdot\mathbf{v}_{local}$$</div>
+    <div class="fi"><div class="fn">World → Object</div>$$\mathbf{v}_{local}=M^{-1}\cdot\mathbf{v}_{world}$$</div>
+    <div class="fi"><div class="fn">To/from Camera</div>$$\mathbf{v}_{view}=V\cdot\mathbf{v}_{world},\quad\mathbf{v}_{world}=V^{-1}\cdot\mathbf{v}_{view}$$</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ CH09: ORIENTATION ══ -->
+<div class="chapter" id="ch-orient">
+  <div class="ch-head"><span class="ch-num">CHAPTER 09</span><h2 class="ch-title">Orientation in 3D</h2></div>
+  <p class="ch-desc">Orientation is more than direction — it includes the rotational alignment (twist) around the principal axis. Three main representations each have tradeoffs.</p>
+  <div class="notice info"><span class="ni2">ℹ️</span>A vector has <em>direction</em> but not <em>orientation</em> — you can twist it along its length with no change. A rigid object (e.g. a jet) has full orientation including roll.</div>
+
+  <h3>Rotation Matrix as Orientation</h3>
+  <div class="mb">$$R=\begin{bmatrix}r_x&u_x&f_x\\r_y&u_y&f_y\\r_z&u_z&f_z\end{bmatrix}$$<p style="font-size:11px;color:var(--text3);margin-top:6px">Columns = right (r), up (u), forward (f) vectors of the object in world space</p></div>
+
+  <h3 id="euler">Euler Angles</h3>
+  <p>Three sequential rotations — yaw (ψ), pitch (θ), roll (φ) — about the principal axes.</p>
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d"></span>Yaw ψ — Z-axis — range [−π, π]</div>$$R_z(\psi)=\begin{bmatrix}\cos\psi&-\sin\psi&0\\\sin\psi&\cos\psi&0\\0&0&1\end{bmatrix}$$</div>
+    <div class="card"><div class="ct"><span class="d g"></span>Pitch θ — Y-axis — range [−π/2, π/2]</div>$$R_y(\theta)=\begin{bmatrix}\cos\theta&0&\sin\theta\\0&1&0\\-\sin\theta&0&\cos\theta\end{bmatrix}$$</div>
+    <div class="card"><div class="ct"><span class="d p"></span>Roll φ — X-axis — range [−π, π]</div>$$R_x(\phi)=\begin{bmatrix}1&0&0\\0&\cos\phi&-\sin\phi\\0&\sin\phi&\cos\phi\end{bmatrix}$$</div>
+  </div>
+  <div class="card" style="margin-top:12px"><div class="ct"><span class="d r"></span>⚠️ Gimbal Lock</div>
+  <p style="font-size:12.5px">When pitch = ±90°, two axes align → one degree of freedom is lost. Effects: unintuitive rotations, numerical instability, restricted motion. Cannot represent all orientations.</p>
+  <div class="notice warning" style="margin-top:8px"><span class="ni2">💡</span>Solution: Use <strong>quaternions</strong>. They operate in 4D and are mathematically immune to gimbal lock.</div></div>
+  <div class="pc">
+    <div class="pros"><div class="pt">✓ Advantages</div><ul><li>Intuitive — yaw/pitch/roll</li><li>Compact (3 values)</li><li>Great for UI sliders</li></ul></div>
+    <div class="cons"><div class="ct2">✗ Disadvantages</div><ul><li>Gimbal lock</li><li>Order-dependent (XYZ ≠ ZYX)</li><li>Aliasing (multiple representations)</li></ul></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ CH10: QUATERNIONS ══ -->
+<div class="chapter" id="ch-quat">
+  <div class="ch-head"><span class="ch-num">CHAPTER 10</span><h2 class="ch-title">Quaternions</h2></div>
+  <p class="ch-desc">The gold standard for 3D rotation. Compact, gimbal-lock-free, and supports smooth interpolation via SLERP.</p>
+
+  <div class="mb"><div class="lbl">DEFINITION</div>$$q=w+xi+yj+zk,\quad i^2=j^2=k^2=ijk=-1$$</div>
+
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d"></span>Encoding a Rotation (axis-angle)</div>
+    $$w=\cos\!\left(\frac{\theta}{2}\right),\quad(x,y,z)=\hat{u}\sin\!\left(\frac{\theta}{2}\right)$$
+    <p style="font-size:11px;color:var(--text3);margin-top:6px">û = unit rotation axis, θ = rotation angle</p></div>
+    <div class="card"><div class="ct"><span class="d g"></span>Unit Quaternion Constraint</div>
+    $$w^2+x^2+y^2+z^2=1$$
+    <p style="font-size:11px;color:var(--text3);margin-top:6px">Always re-normalize after accumulation to avoid drift</p></div>
+  </div>
+
+  <div class="notice info"><span class="ni2">❓</span><strong>Why θ/2?</strong> q and −q represent the same rotation (double-cover property). Negating all quaternion components leaves the 3D rotation unchanged.</div>
+
+  <h3 id="quat-ops">Operations</h3>
+  <div class="fg">
+    <div class="fi"><div class="fn">Magnitude</div>$$\|q\|=\sqrt{w^2+x^2+y^2+z^2}$$</div>
+    <div class="fi"><div class="fn">Conjugate (= inverse for unit q)</div>$$q^*=[w,\,-\mathbf{v}]=(w,-x,-y,-z)$$</div>
+    <div class="fi"><div class="fn">Inverse (general)</div>$$q^{-1}=\frac{q^*}{\|q\|^2}$$</div>
+    <div class="fi"><div class="fn">Conjugate reversal</div>$$q\cdot q^*=\|q\|^2$$</div>
+  </div>
+
+  <h4>Hamilton Product (full component form)</h4>
+  <div class="mb">$$q_1 q_2=\begin{bmatrix}w_1w_2-x_1x_2-y_1y_2-z_1z_2\\w_1x_2+x_1w_2+y_1z_2-z_1y_2\\w_1y_2-x_1z_2+y_1w_2+z_1x_2\\w_1z_2+x_1y_2-y_1x_2+z_1w_2\end{bmatrix}$$</div>
+  <div class="notice warning"><span class="ni2">⚠️</span>Quaternion multiplication is NOT commutative: q₁q₂ ≠ q₂q₁. To combine rotations: q_total = q₂ · q₁ applies q₁ first.</div>
+
+  <h4>Rotating a Vector (Sandwich Product)</h4>
+  <div class="mb"><div class="lbl">SANDWICH</div>$$\mathbf{v}'=q\,\mathbf{p}\,q^{-1}\quad\text{where }\mathbf{p}=(0,v_x,v_y,v_z)\text{ (pure quaternion)}$$</div>
+
+  <h4>Quaternion → Rotation Matrix</h4>
+  <div class="mb">$$R=\begin{bmatrix}1-2(y^2+z^2)&2(xy-wz)&2(xz+wy)\\2(xy+wz)&1-2(x^2+z^2)&2(yz-wx)\\2(xz-wy)&2(yz+wx)&1-2(x^2+y^2)\end{bmatrix}$$</div>
+
+  <h4>Multiplication Rules</h4>
+  <div class="fg">
+    <div class="fi"><div class="fn">Basis rules</div>$$ij=k,\;ji=-k,\;jk=i,\;kj=-i,\;ki=j,\;ik=-j$$</div>
+    <div class="fi"><div class="fn">Negation</div>$$q\text{ and }-q\text{ represent the same rotation}$$</div>
+  </div>
+
+  <h3 id="slerp">SLERP — Spherical Linear Interpolation</h3>
+  <p>Smoothly interpolates between two orientations along the shortest arc on the 4D unit sphere.</p>
+  <div class="mb"><div class="lbl">SLERP</div>$$\text{slerp}(q_1,q_2,t)=\frac{\sin((1-t)\Omega)}{\sin\Omega}\,q_1+\frac{\sin(t\Omega)}{\sin\Omega}\,q_2,\quad\Omega=\arccos(q_1\cdot q_2)$$</div>
+  <div class="notice success"><span class="ni2">💡</span>If q₁·q₂ &lt; 0, negate one quaternion before SLERP to take the shorter path. For nearly-identical quaternions (Ω ≈ 0), fall back to NLERP (normalize(lerp(q₁,q₂,t))) to avoid division by zero.</div>
+
+  <h4>NLERP (Normalized LERP)</h4>
+  <div class="mb">$$\text{nlerp}(q_1,q_2,t)=\text{normalize}((1-t)q_1+t\,q_2)$$<p style="font-size:11px;color:var(--text3);margin-top:6px">Faster than SLERP but non-constant angular speed. Good approximation when t is small or q₁ ≈ q₂.</p></div>
+
+  <div class="pc">
+    <div class="pros"><div class="pt">✓ Advantages</div><ul><li>No gimbal lock</li><li>Only 4 floats</li><li>SLERP for smooth animation</li><li>Numerically stable</li></ul></div>
+    <div class="cons"><div class="ct2">✗ Disadvantages</div><ul><li>Less intuitive than Euler</li><li>Must stay normalized</li><li>No scale component</li></ul></div>
+  </div>
+
+  <div class="tw" style="margin-top:20px"><table>
+    <tr><th>Representation</th><th>Storage</th><th>Gimbal Lock</th><th>Interpolation</th><th>Best Use</th></tr>
+    <tr><td>Euler Angles</td><td>3 floats</td><td>Yes</td><td>Poor</td><td>UI controls, human input</td></tr>
+    <tr><td>Rotation Matrix</td><td>9 floats</td><td>No</td><td>Poor</td><td>GPU shaders, vector transform</td></tr>
+    <tr><td>Quaternion</td><td>4 floats</td><td>No</td><td>Excellent (SLERP)</td><td>Animation, physics, runtime</td></tr>
+    <tr><td>Axis-Angle</td><td>4 floats</td><td>No</td><td>Moderate</td><td>Defining rotations intuitively</td></tr>
+  </table></div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ CH11: ROTATION CONVERSIONS ══ -->
+<div class="chapter" id="ch-rotconv">
+  <div class="ch-head"><span class="ch-num">CHAPTER 11</span><h2 class="ch-title">Rotation Conversions</h2></div>
+  <p class="ch-desc">Converting between Euler angles, rotation matrices, axis-angle, and quaternions — with full formulas and gimbal-lock edge cases.</p>
+
+  <div class="conv-grid">
+    <div class="conv-item"><div class="conv-from">From</div><div class="conv-to">Euler → Matrix</div><a href="#euler2mat" style="font-size:12px;color:var(--accent)">↓ see below</a></div>
+    <div class="conv-item"><div class="conv-from">From</div><div class="conv-to">Matrix → Euler</div><a href="#mat2euler" style="font-size:12px;color:var(--accent)">↓ see below</a></div>
+    <div class="conv-item"><div class="conv-from">From</div><div class="conv-to">Quaternion → Matrix</div><a href="#quat2mat" style="font-size:12px;color:var(--accent)">↓ see below</a></div>
+    <div class="conv-item"><div class="conv-from">From</div><div class="conv-to">Matrix → Quaternion</div><a href="#mat2quat" style="font-size:12px;color:var(--accent)">↓ see below</a></div>
+    <div class="conv-item"><div class="conv-from">From</div><div class="conv-to">Euler → Quaternion</div><a href="#euler2quat" style="font-size:12px;color:var(--accent)">↓ see below</a></div>
+    <div class="conv-item"><div class="conv-from">From</div><div class="conv-to">Quaternion → Euler</div><a href="#quat2euler" style="font-size:12px;color:var(--accent)">↓ see below</a></div>
+  </div>
+
+  <h3 id="euler2mat">Euler Angles → Rotation Matrix (Z-Y-X convention)</h3>
+  <p>α = roll (X), β = pitch (Y), γ = yaw (Z). Combined: R = R_z · R_y · R_x</p>
+  <div class="mb"><div class="lbl">ZYX EULER → MATRIX</div>$$R=\begin{bmatrix}\cos\gamma\cos\beta&\cos\gamma\sin\beta\sin\alpha-\sin\gamma\cos\alpha&\cos\gamma\sin\beta\cos\alpha+\sin\gamma\sin\alpha\\\sin\gamma\cos\beta&\sin\gamma\sin\beta\sin\alpha+\cos\gamma\cos\alpha&\sin\gamma\sin\beta\cos\alpha-\cos\gamma\sin\alpha\\-\sin\beta&\cos\beta\sin\alpha&\cos\beta\cos\alpha\end{bmatrix}$$</div>
+
+  <h3 id="mat2euler">Rotation Matrix → Euler Angles</h3>
+  <p>Extract ZYX Euler angles from rotation matrix R where r₀₀…r₂₂ are matrix elements:</p>
+  <div class="mb"><div class="lbl">NORMAL CASE (r₂₀ ≠ ±1)</div>$$\gamma=\text{atan2}(r_{10},r_{00}),\quad\beta=\text{asin}(-r_{20}),\quad\alpha=\text{atan2}(r_{21},r_{22})$$</div>
+  <div class="card" style="margin:12px 0"><div class="ct"><span class="d r"></span>Gimbal Lock Cases (β = ±90°, r₂₀ = ∓1)</div>
+  <p style="font-size:12.5px;margin-bottom:8px">When pitch = ±90°, yaw and roll become coupled — only their sum/difference can be determined.</p>
+  <div class="fg" style="margin:0">
+    <div class="fi"><div class="fn">r₂₀ = −1 (β = +90°)</div>$$\beta=+\frac{\pi}{2},\;\gamma=0,\;\alpha=\text{atan2}(-r_{01},r_{11})$$</div>
+    <div class="fi"><div class="fn">r₂₀ = +1 (β = −90°)</div>$$\beta=-\frac{\pi}{2},\;\gamma=0,\;\alpha=\text{atan2}(r_{01},r_{11})$$</div>
+  </div></div>
+  <div class="notice warning"><span class="ni2">⚠️</span>The choice γ = 0 in the gimbal lock case is arbitrary — only (α − γ) or (α + γ) is deterministic in these degenerate cases.</div>
+
+  <h3 id="quat2mat">Quaternion → Rotation Matrix</h3>
+  <div class="mb"><div class="lbl">QUAT → 3×3 MATRIX</div>$$R=\begin{bmatrix}1-2y^2-2z^2&2xy-2wz&2xz+2wy\\2xy+2wz&1-2x^2-2z^2&2yz-2wx\\2xz-2wy&2yz+2wx&1-2x^2-2y^2\end{bmatrix}$$</div>
+
+  <h3 id="mat2quat">Rotation Matrix → Quaternion</h3>
+  <p>Standard (Shepperd's) method — numerically stable by choosing the largest component first:</p>
+  <div class="mb"><div class="lbl">PRIMARY CASE (trace &gt; 0)</div>$$w=\tfrac{1}{2}\sqrt{1+r_{00}+r_{11}+r_{22}}$$
+  $$x=\frac{r_{21}-r_{12}}{4w},\quad y=\frac{r_{02}-r_{20}}{4w},\quad z=\frac{r_{10}-r_{01}}{4w}$$</div>
+
+  <div class="card"><div class="ct"><span class="d y"></span>Fallback cases (when w ≈ 0 — trace near −1)</div>
+  <div class="fg" style="margin-top:8px">
+    <div class="fi"><div class="fn">r₀₀ largest diagonal</div>$$x=\tfrac{1}{2}\sqrt{1+r_{00}-r_{11}-r_{22}}$$$$w=\tfrac{r_{21}-r_{12}}{4x},\;y=\tfrac{r_{01}+r_{10}}{4x},\;z=\tfrac{r_{02}+r_{20}}{4x}$$</div>
+    <div class="fi"><div class="fn">r₁₁ largest diagonal</div>$$y=\tfrac{1}{2}\sqrt{1-r_{00}+r_{11}-r_{22}}$$$$w=\tfrac{r_{02}-r_{20}}{4y},\;x=\tfrac{r_{01}+r_{10}}{4y},\;z=\tfrac{r_{12}+r_{21}}{4y}$$</div>
+    <div class="fi"><div class="fn">r₂₂ largest diagonal</div>$$z=\tfrac{1}{2}\sqrt{1-r_{00}-r_{11}+r_{22}}$$$$w=\tfrac{r_{10}-r_{01}}{4z},\;x=\tfrac{r_{02}+r_{20}}{4z},\;y=\tfrac{r_{12}+r_{21}}{4z}$$</div>
+  </div></div>
+
+  <h3 id="euler2quat">Euler Angles → Quaternion (Z-Y-X)</h3>
+  <p>Construct individual axis quaternions then multiply: q = q_z · q_y · q_x</p>
+  <div class="fg">
+    <div class="fi"><div class="fn">Roll α around X</div>$$q_x=\left(\cos\tfrac{\alpha}{2},\sin\tfrac{\alpha}{2},0,0\right)$$</div>
+    <div class="fi"><div class="fn">Pitch β around Y</div>$$q_y=\left(\cos\tfrac{\beta}{2},0,\sin\tfrac{\beta}{2},0\right)$$</div>
+    <div class="fi"><div class="fn">Yaw γ around Z</div>$$q_z=\left(\cos\tfrac{\gamma}{2},0,0,\sin\tfrac{\gamma}{2}\right)$$</div>
+  </div>
+  <div class="mb"><div class="lbl">COMBINED (ZYX)</div>$$w=\cos\tfrac{\alpha}{2}\cos\tfrac{\beta}{2}\cos\tfrac{\gamma}{2}+\sin\tfrac{\alpha}{2}\sin\tfrac{\beta}{2}\sin\tfrac{\gamma}{2}$$
+  $$x=\sin\tfrac{\alpha}{2}\cos\tfrac{\beta}{2}\cos\tfrac{\gamma}{2}-\cos\tfrac{\alpha}{2}\sin\tfrac{\beta}{2}\sin\tfrac{\gamma}{2}$$
+  $$y=\cos\tfrac{\alpha}{2}\sin\tfrac{\beta}{2}\cos\tfrac{\gamma}{2}+\sin\tfrac{\alpha}{2}\cos\tfrac{\beta}{2}\sin\tfrac{\gamma}{2}$$
+  $$z=\cos\tfrac{\alpha}{2}\cos\tfrac{\beta}{2}\sin\tfrac{\gamma}{2}-\sin\tfrac{\alpha}{2}\sin\tfrac{\beta}{2}\cos\tfrac{\gamma}{2}$$</div>
+
+  <h3 id="quat2euler">Quaternion → Euler Angles</h3>
+  <p>Via the quaternion-derived rotation matrix (normal case):</p>
+  <div class="mb"><div class="lbl">NORMAL CASE</div>$$\gamma=\text{atan2}(2xy+2wz,\;1-2x^2-2z^2)$$
+  $$\beta=\arcsin(2xz-2wy)$$
+  $$\alpha=\text{atan2}(2yz+2wx,\;1-2y^2-2z^2)$$</div>
+  <div class="notice warning"><span class="ni2">⚠️</span>Gimbal lock: if β = ±90° (sin β = ±1), set γ = 0 and α = atan2(−2xy−2wz, 1−2y²−2z²).</div>
+
+  <h4>Axis-Angle ↔ Quaternion</h4>
+  <div class="fg">
+    <div class="fi"><div class="fn">Axis-Angle → Quaternion</div>$$q=\left[\cos\tfrac{\theta}{2},\;\hat{u}\sin\tfrac{\theta}{2}\right]$$</div>
+    <div class="fi"><div class="fn">Quaternion → Axis-Angle</div>$$\theta=2\arccos w,\quad\hat{u}=\frac{(x,y,z)}{\sin(\theta/2)}$$<p style="font-size:11px;color:var(--text3);margin-top:4px">Handle θ≈0 → arbitrary axis</p></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ CH12: GEOMETRY ══ -->
+<div class="chapter" id="ch-geom">
+  <div class="ch-head"><span class="ch-num">CHAPTER 12</span><h2 class="ch-title">Geometric Primitives</h2></div>
+  <p class="ch-desc">How shapes are mathematically represented and queried — intersection tests are the foundation of physics, rendering, and collision detection.</p>
+
+  <h3 id="repr">Representation Types</h3>
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d"></span>Implicit f(x,y,z) = 0</div><p style="font-size:12.5px">Negative=inside, positive=outside. <strong>Good for:</strong> ray tracing, CSG, collision queries.</p></div>
+    <div class="card"><div class="ct"><span class="d g"></span>Parametric x=f(u,v)</div><p style="font-size:12.5px">Sweep parameters over a range. <strong>Good for:</strong> Bézier, NURBS, UV mapping, animation paths.</p></div>
+    <div class="card"><div class="ct"><span class="d p"></span>Explicit z=f(x,y)</div><p style="font-size:12.5px">One coord as function of others. <strong>Good for:</strong> height maps, terrain, simple surfaces.</p></div>
+    <div class="card"><div class="ct"><span class="d y"></span>Mesh (discrete)</div><p style="font-size:12.5px">Vertices + edges + faces. <strong>Good for:</strong> real-time rendering, physics, 3D modeling.</p></div>
+  </div>
+
+  <h4>Sphere — All Forms</h4>
+  <div class="fg">
+    <div class="fi"><div class="fn">Implicit (unit)</div>$$x^2+y^2+z^2-r^2=0$$</div>
+    <div class="fi"><div class="fn">Point classification</div>$$<r^2\text{ inside},\;=r^2\text{ on},\;>r^2\text{ outside}$$</div>
+    <div class="fi"><div class="fn">Parametric (UV sphere)</div>$$x=r\sin\phi\cos\theta,\;y=r\sin\phi\sin\theta,\;z=r\cos\phi$$</div>
+  </div>
+
+  <h3 id="lines">Lines, Rays &amp; Planes</h3>
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d"></span>Line (infinite)</div>$$\mathbf{p}(t)=\mathbf{p_0}+t\,\mathbf{d},\quad t\in(-\infty,+\infty)$$</div>
+    <div class="card"><div class="ct"><span class="d g"></span>Ray (semi-infinite)</div>$$\mathbf{p}(t)=\mathbf{o}+t\,\hat{d},\quad t\geq0$$</div>
+    <div class="card"><div class="ct"><span class="d p"></span>Line Segment</div>$$\mathbf{p}(t)=\mathbf{p_0}+t(\mathbf{p_1}-\mathbf{p_0}),\quad t\in[0,1]$$</div>
+  </div>
+
+  <h4>Plane Representations</h4>
+  <div class="fg">
+    <div class="fi"><div class="fn">General form</div>$$ax+by+cz+d=0$$<p style="font-size:11px;color:var(--text3);margin-top:4px">(a,b,c) = normal, d = signed distance from origin</p></div>
+    <div class="fi"><div class="fn">Point-Normal form</div>$$\hat{n}\cdot(\mathbf{p}-\mathbf{p_0})=0$$</div>
+    <div class="fi"><div class="fn">Signed distance of point Q to plane</div>$$d=\hat{n}\cdot\mathbf{Q}+d_{plane}$$<p style="font-size:11px;color:var(--text3);margin-top:4px">+ = front, − = back, 0 = on plane</p></div>
+  </div>
+
+  <h3 id="intersections">Intersection Tests</h3>
+  <h4>Ray-Plane</h4>
+  <div class="mb">$$t=\frac{-(\hat{n}\cdot\mathbf{o}+d)}{\hat{n}\cdot\hat{d}}$$<p style="font-size:11px;color:var(--text3);margin-top:6px">No intersection if denominator ≈ 0 (ray parallel to plane)</p></div>
+
+  <h4>Ray-Sphere</h4>
+  <div class="mb">$$\mathbf{f}=\mathbf{o}-\mathbf{c},\quad a=\hat{d}\cdot\hat{d},\quad b=2(\mathbf{f}\cdot\hat{d}),\quad c=\mathbf{f}\cdot\mathbf{f}-r^2$$
+  $$\Delta=b^2-4ac,\quad t=\frac{-b\pm\sqrt{\Delta}}{2a}$$<p style="font-size:11px;color:var(--text3);margin-top:6px">Δ&lt;0: no hit; Δ=0: tangent; Δ&gt;0: two intersections (take smallest positive t)</p></div>
+
+  <h4>Ray-AABB (slab method)</h4>
+  <div class="mb">$$t_{min}=\max\!\left(\frac{b_{min}-o}{d}\right),\quad t_{max}=\min\!\left(\frac{b_{max}-o}{d}\right)$$<p style="font-size:11px;color:var(--text3);margin-top:6px">Per-axis. Hit if t_min ≤ t_max and t_max ≥ 0.</p></div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ CH13: ENGINE ══ -->
+<div class="chapter" id="ch-engine">
+  <div class="ch-head"><span class="ch-num">CHAPTER 13</span><h2 class="ch-title">Engine &amp; Game Dev Essentials</h2></div>
+  <p class="ch-desc">Topics not always in textbooks but essential in practice: look-at, perspective projection, normal transforms, interpolation, numerical stability, bounding volumes, and frustum culling.</p>
+
+  <h3 id="lookatfn">Look-At Matrix (View Matrix Construction)</h3>
+  <p>Builds the view matrix from camera position, target point, and world-up vector. Used in every 3D engine.</p>
+  <div class="mb"><div class="lbl">LOOK-AT (right-handed, OpenGL)</div>
+  $$\mathbf{f}=\text{normalize}(\mathbf{eye}-\mathbf{target}),\quad\mathbf{r}=\text{normalize}(\mathbf{up}\times\mathbf{f}),\quad\mathbf{u}=\mathbf{f}\times\mathbf{r}$$
+  $$V=\begin{bmatrix}r_x&r_y&r_z&-\mathbf{r}\cdot\mathbf{eye}\\u_x&u_y&u_z&-\mathbf{u}\cdot\mathbf{eye}\\f_x&f_y&f_z&-\mathbf{f}\cdot\mathbf{eye}\\0&0&0&1\end{bmatrix}$$</div>
+  <div class="notice info"><span class="ni2">ℹ️</span>For DirectX (left-handed), f = normalize(target − eye) and the sign conventions differ. Most engine APIs (GLM, DirectXMath) have built-in lookAt functions — verify their handedness.</div>
+
+  <h3 id="projections">Perspective Projection Matrix</h3>
+  <p>Maps camera-space geometry to clip space. Creates the illusion of depth by dividing by z (perspective division by w).</p>
+  <div class="mb"><div class="lbl">PERSPECTIVE (OpenGL, NDC z ∈ [−1,1])</div>
+  $$P=\begin{bmatrix}\frac{f}{a}&0&0&0\\0&f&0&0\\0&0&\frac{n+f}{n-f}&\frac{2nf}{n-f}\\0&0&-1&0\end{bmatrix},\quad f=\cot\!\left(\frac{fov}{2}\right),\quad a=\frac{width}{height}$$<p style="font-size:11px;color:var(--text3);margin-top:6px">n = near plane, f = far plane, fov = vertical field of view</p></div>
+  <div class="mb"><div class="lbl">ORTHOGRAPHIC (OpenGL)</div>$$P_{ortho}=\begin{bmatrix}\frac{2}{r-l}&0&0&-\frac{r+l}{r-l}\\0&\frac{2}{t-b}&0&-\frac{t+b}{t-b}\\0&0&\frac{-2}{f-n}&-\frac{f+n}{f-n}\\0&0&0&1\end{bmatrix}$$</div>
+  <div class="notice tip"><span class="ni2">📐</span><strong>NDC conventions:</strong> OpenGL z ∈ [−1,1]. DirectX/Vulkan/Metal z ∈ [0,1]. This changes the projection matrix. Always check your API's depth range.</div>
+
+  <h3 id="normals">Transforming Normals Correctly</h3>
+  <p>Surface normals cannot be transformed with the same matrix as positions/vertices. Non-uniform scale will break normal directions.</p>
+  <div class="notice danger"><span class="ni2">🚨</span>Never multiply normals by the model matrix directly. Use the <strong>inverse transpose</strong> of the model matrix instead.</div>
+  <div class="mb"><div class="lbl">NORMAL MATRIX</div>$$\mathbf{n}'=(M^{-1})^T\mathbf{n}=((M^T)^{-1})\mathbf{n}$$<p style="font-size:11px;color:var(--text3);margin-top:6px">In GLSL: mat3 normalMatrix = transpose(inverse(mat3(model)));</p></div>
+  <div class="notice success"><span class="ni2">💡</span>For orthogonal matrices (pure rotation, no scale), M⁻¹ = Mᵀ, so (M⁻¹)ᵀ = M. The normal matrix equals the model matrix — no extra computation needed.</div>
+<pre><code>// GLSL vertex shader
+uniform mat4 model;
+mat3 normalMatrix = transpose(inverse(mat3(model)));
+vec3 worldNormal = normalize(normalMatrix * aNormal);</code></pre>
+
+  <h3 id="lerp">Interpolation — LERP, SLERP, Smoothstep</h3>
+  <div class="fg">
+    <div class="fi"><div class="fn">Linear Interpolation (LERP)</div>$$\text{lerp}(a,b,t)=(1-t)a+tb,\quad t\in[0,1]$$</div>
+    <div class="fi"><div class="fn">Inverse LERP</div>$$t=\frac{v-a}{b-a}$$<p style="font-size:11px;color:var(--text3);margin-top:4px">Remap v from [a,b] to [0,1]</p></div>
+    <div class="fi"><div class="fn">Remap (any range)</div>$$v_{out}=\text{lerp}(c,d,\,\text{invlerp}(a,b,v_{in}))$$</div>
+    <div class="fi"><div class="fn">Smoothstep</div>$$s(t)=3t^2-2t^3$$<p style="font-size:11px;color:var(--text3);margin-top:4px">Zero derivative at t=0 and t=1. Smooth ease in/out.</p></div>
+    <div class="fi"><div class="fn">Smootherstep (Ken Perlin)</div>$$s(t)=6t^5-15t^4+10t^3$$<p style="font-size:11px;color:var(--text3);margin-top:4px">Also zero second derivative at endpoints.</p></div>
+    <div class="fi"><div class="fn">SLERP (quaternions)</div>$$\text{slerp}(q_1,q_2,t)=\frac{\sin((1-t)\Omega)}{\sin\Omega}q_1+\frac{\sin(t\Omega)}{\sin\Omega}q_2$$</div>
+  </div>
+<pre><code>// Smoothstep in GLSL
+float smoothstep(float edge0, float edge1, float x) {
+    float t = clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
+    return t * t * (3.0 - 2.0 * t);
+}</code></pre>
+
+  <h3 id="numstab">Numerical Stability</h3>
+  <p>Floating-point accumulation errors are a constant concern in engine code:</p>
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d r"></span>Matrix Creep</div><p style="font-size:12.5px">Rotation matrices drift from orthogonality after many multiplications. Re-orthogonalize with Gram-Schmidt or use quaternions with periodic re-normalization.</p></div>
+    <div class="card"><div class="ct"><span class="d r"></span>Quaternion Drift</div><p style="font-size:12.5px">Accumulated quaternion rotations drift from unit length. Normalize every N frames (or every frame in critical code).</p></div>
+    <div class="card"><div class="ct"><span class="d y"></span>Epsilon Comparisons</div><p style="font-size:12.5px">Never use == for floats. Use |a−b| &lt; ε. Choose ε based on the scale of your world (typically 1e-5 to 1e-7).</p></div>
+    <div class="card"><div class="ct"><span class="d y"></span>Catastrophic Cancellation</div><p style="font-size:12.5px">Subtracting nearly-equal large numbers loses precision. e.g. computing distances between distant objects — work in local spaces when possible.</p></div>
+  </div>
+<pre><code>// Quaternion renormalization
+void renormalize(Quaternion& q) {
+    float len = sqrtf(q.w*q.w + q.x*q.x + q.y*q.y + q.z*q.z);
+    if (len > 0.0001f) { q.w/=len; q.x/=len; q.y/=len; q.z/=len; }
+}</code></pre>
+
+  <h3 id="aabb">AABB &amp; Bounding Volumes</h3>
+  <p>Axis-Aligned Bounding Boxes are the foundation of spatial acceleration structures (BVH, octrees, broad-phase collision).</p>
+  <div class="fg">
+    <div class="fi"><div class="fn">AABB definition</div>$$\text{AABB}=(\mathbf{min},\mathbf{max}),\quad\mathbf{center}=\frac{\mathbf{min}+\mathbf{max}}{2},\quad\mathbf{half}=\frac{\mathbf{max}-\mathbf{min}}{2}$$</div>
+    <div class="fi"><div class="fn">Point in AABB</div>$$p\in\text{AABB}\iff p_x\in[min_x,max_x]\;\land\;p_y\in[min_y,max_y]\;\land\;p_z\in[min_z,max_z]$$</div>
+    <div class="fi"><div class="fn">AABB vs AABB (overlap)</div>$$\text{overlap}\iff|c_1-c_2|\leq h_1+h_2\text{ on ALL axes}$$</div>
+    <div class="fi"><div class="fn">Sphere vs AABB</div>$$d^2=\sum_i\max(0,\max(min_i-p_i,\;p_i-max_i))^2,\quad\text{hit if }d^2\leq r^2$$</div>
+  </div>
+
+  <h4>Transforming an AABB</h4>
+  <p>After applying a rotation/scale matrix M, the AABB must be recomputed. The cheap way (Arvo's method):</p>
+<pre><code>// Arvo's method — recompute AABB after transform M
+AABB transformAABB(const AABB& box, const Mat4& M) {
+    Vec3 newMin = M.translation();
+    Vec3 newMax = M.translation();
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++) {
+            float a = M[i][j] * box.min[j];
+            float b = M[i][j] * box.max[j];
+            newMin[i] += std::min(a, b);
+            newMax[i] += std::max(a, b);
+        }
+    return {newMin, newMax};
+}</code></pre>
+
+  <h3 id="frustum">Frustum Culling</h3>
+  <p>Discard objects outside the camera's view frustum before sending to the GPU. A frustum is defined by 6 planes (near, far, left, right, top, bottom).</p>
+  <div class="fg">
+    <div class="fi"><div class="fn">Plane equation</div>$$\hat{n}\cdot\mathbf{p}+d=0$$<p style="font-size:11px;color:var(--text3);margin-top:4px">+d = signed distance. Positive = inside frustum.</p></div>
+    <div class="fi"><div class="fn">Sphere vs Plane (fast test)</div>$$\text{dist}=\hat{n}\cdot\mathbf{center}+d,\quad\text{outside if dist}<-r$$</div>
+    <div class="fi"><div class="fn">AABB vs Plane (conservative)</div>$$e=h_x|n_x|+h_y|n_y|+h_z|n_z|,\quad\text{outside if }\hat{n}\cdot\mathbf{c}+d<-e$$</div>
+  </div>
+  <div class="notice tip"><span class="ni2">🎮</span><strong>Pipeline:</strong> Extract 6 frustum planes from the VP matrix → test each object's bounding sphere (fast) → optionally refine with AABB. Objects that fail any one plane are culled entirely.</div>
+
+  <h4>Extract Frustum Planes from VP Matrix</h4>
+<pre><code>// Gribb & Hartmann method — extract planes from VP matrix
+// Each plane: ax + by + cz + d = 0
+// Left:   VP[3]+VP[0]   Right: VP[3]-VP[0]
+// Bottom: VP[3]+VP[1]   Top:   VP[3]-VP[1]
+// Near:   VP[3]+VP[2]   Far:   VP[3]-VP[2]
+// (using row-major convention; normalize each plane normal)</code></pre>
+
+  <h4>Normal Map Tangent Space (TBN Matrix)</h4>
+  <p>Per-vertex or per-pixel matrix that transforms normals from tangent space (texture) into world space for lighting calculations.</p>
+  <div class="mb">$$TBN=\begin{bmatrix}T_x&B_x&N_x\\T_y&B_y&N_y\\T_z&B_z&N_z\end{bmatrix},\quad\mathbf{n}_{world}=TBN\cdot\mathbf{n}_{tangent}$$<p style="font-size:11px;color:var(--text3);margin-top:6px">T = tangent, B = bitangent, N = surface normal. All unit vectors in world space.</p></div>
+<pre><code>// GLSL — TBN construction in vertex shader
+vec3 T = normalize(mat3(model) * aTangent);
+vec3 N = normalize(mat3(normalMatrix) * aNormal);
+T = normalize(T - dot(T, N) * N);  // Re-orthogonalize
+vec3 B = cross(N, T);
+mat3 TBN = mat3(T, B, N);</code></pre>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ CHEATSHEET ══ -->
+<div class="chapter" id="ch-cheat">
+  <div class="ch-head"><span class="ch-num">⚡ QUICK REF</span><h2 class="ch-title">Formula Cheatsheet</h2></div>
+  <p class="ch-desc">All critical formulas at a glance.</p>
+
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d"></span>Vectors</div><ul class="cl"><li>‖v‖ = √(vx²+vy²+vz²)</li><li>v̂ = v / ‖v‖</li><li>a·b = ‖a‖‖b‖cosθ</li><li>‖a×b‖ = ‖a‖‖b‖sinθ</li><li>a·a = ‖a‖²</li><li>b∥ = (â·b)â, b⊥ = b − b∥</li></ul></div>
+    <div class="card"><div class="ct"><span class="d g"></span>Matrices</div><ul class="cl"><li>AB ≠ BA (non-commutative)</li><li>(AB)ᵀ = BᵀAᵀ</li><li>det(AB) = det(A)·det(B)</li><li>Orthogonal: M⁻¹ = Mᵀ</li><li>M⁻¹ = adj(M) / det(M)</li><li>TRS order: M = T·R·S</li></ul></div>
+    <div class="card"><div class="ct"><span class="d p"></span>Rotation Matrices</div><ul class="cl"><li>2D: [[cosθ,sinθ],[−sinθ,cosθ]]</li><li>det(R) = 1 always</li><li>Rodrigues: v' = vcosθ + (n×v)sinθ + n(n·v)(1−cosθ)</li><li>R⁻¹ = Rᵀ (orthogonal)</li></ul></div>
+    <div class="card"><div class="ct"><span class="d y"></span>Quaternions</div><ul class="cl"><li>q = [cos(θ/2), sin(θ/2)·û]</li><li>Rotate: v' = q·p·q⁻¹</li><li>Conjugate: q* = (w, −v)</li><li>Unit: ‖q‖ = 1</li><li>SLERP for smooth interpolation</li><li>q and −q = same rotation</li></ul></div>
+    <div class="card"><div class="ct"><span class="d t"></span>Polar / Spherical</div><ul class="cl"><li>Polar: r=√(x²+y²), θ=atan2(y,x)</li><li>x=rcosθ, y=rsinθ</li><li>Spherical: x=r·sinφ·cosθ</li><li>y=r·sinφ·sinθ, z=r·cosφ</li><li>r=√(x²+y²+z²)</li><li>φ=arccos(z/r)</li></ul></div>
+    <div class="card"><div class="ct"><span class="d r"></span>Engine Essentials</div><ul class="cl"><li>Normals: (M⁻¹)ᵀ</li><li>View: LookAt(eye, target, up)</li><li>LERP: (1−t)a + tb</li><li>Smoothstep: 3t²−2t³</li><li>AABB hit: slab method</li><li>Re-normalize quaternions periodically</li></ul></div>
+    <div class="card"><div class="ct"><span class="d"></span>Barycentric</div><ul class="cl"><li>P = λ₁A + λ₂B + λ₃C, Σλ=1</li><li>All λ ≥ 0 → inside triangle</li><li>Möller–Trumbore: fast ray-triangle</li><li>Perspective-correct: divide attrs by w</li><li>Interpolate UVs, normals, color</li></ul></div>
+    <div class="card"><div class="ct"><span class="d g"></span>Curves</div><ul class="cl"><li>Cubic Bézier: B(t) = Σ C(3,i)(1−t)^(3−i)t^i Pᵢ</li><li>Catmull-Rom tangent: Tᵢ = (Pᵢ₊₁−Pᵢ₋₁)/2</li><li>Hermite: positions + tangents at endpoints</li><li>Arc length: numerical integration of ‖B'(t)‖</li><li>de Casteljau: recursive lerp</li></ul></div>
+    <div class="card"><div class="ct"><span class="d p"></span>SDF</div><ul class="cl"><li>Sphere: ‖p‖ − r</li><li>Union: min(d₁,d₂)</li><li>Intersect: max(d₁,d₂)</li><li>Subtract: max(dA,−dB)</li><li>Normal: normalize(gradient) via finite differences</li><li>Raymarch: step by SDF value</li></ul></div>
+    <div class="card"><div class="ct"><span class="d y"></span>PBR Lighting</div><ul class="cl"><li>BRDF = diffuse + specular</li><li>D (GGX): microfacet distribution</li><li>F (Schlick): F₀+(1−F₀)(1−h·v)⁵</li><li>G (Smith): shadow-masking</li><li>Specular = DFG / (4 NdotL NdotV)</li><li>Metals: F₀=albedo, no diffuse</li></ul></div>
+  </div>
+
+  <div class="tw" style="margin-top:20px"><table>
+    <tr><th>Transform</th><th>Linear?</th><th>det(M)</th><th>Preserves lengths</th><th>Preserves angles</th><th>Invertible</th></tr>
+    <tr><td>Rotation</td><td>Yes</td><td>1</td><td>Yes</td><td>Yes</td><td>Yes (Rᵀ)</td></tr>
+    <tr><td>Uniform Scale k</td><td>Yes</td><td>k³</td><td>No</td><td>Yes</td><td>Yes</td></tr>
+    <tr><td>Non-uniform Scale</td><td>Yes</td><td>sx·sy·sz</td><td>No</td><td>No</td><td>Yes (if all ki≠0)</td></tr>
+    <tr><td>Reflection</td><td>Yes</td><td>−1</td><td>Yes</td><td>Yes</td><td>Yes (self-inverse)</td></tr>
+    <tr><td>Shear</td><td>Yes</td><td>1</td><td>No</td><td>No</td><td>Yes</td></tr>
+    <tr><td>Orthographic Proj</td><td>Yes</td><td>0</td><td>No</td><td>No</td><td>No (singular)</td></tr>
+    <tr><td>Translation</td><td>No (Affine)</td><td>1 (4×4)</td><td>Yes</td><td>Yes</td><td>Yes (T⁻¹)</td></tr>
+    <tr><td>Perspective Proj</td><td>No</td><td>0</td><td>No</td><td>No</td><td>No</td></tr>
+  </table></div>
+
+  <div class="tw" style="margin-top:20px"><table>
+    <tr><th>Rotation Conversion</th><th>Key formula</th><th>Gimbal Lock?</th></tr>
+    <tr><td>Euler → Matrix</td><td>R = Rz·Ry·Rx</td><td>Input may have it</td></tr>
+    <tr><td>Matrix → Euler</td><td>β=asin(−r₂₀), γ=atan2(r₁₀,r₀₀), α=atan2(r₂₁,r₂₂)</td><td>Yes, when β=±90°</td></tr>
+    <tr><td>Quat → Matrix</td><td>Closed-form 3×3 from w,x,y,z</td><td>No</td></tr>
+    <tr><td>Matrix → Quat</td><td>Shepperd method (pick largest component)</td><td>No</td></tr>
+    <tr><td>Euler → Quat</td><td>q = qz·qy·qx</td><td>No (quaternions immune)</td></tr>
+    <tr><td>Quat → Euler</td><td>Via matrix entries; handle β=±90° case</td><td>Yes, degenerate output</td></tr>
+  </table></div>
+</div>
+
+
+<div class="divider"></div>
+
+<!-- ══ CH14: BARYCENTRIC ══ -->
+<div class="chapter" id="ch-bary">
+  <div class="ch-head"><span class="ch-num">CHAPTER 14</span><h2 class="ch-title">Barycentric Coordinates</h2></div>
+  <p class="ch-desc">Barycentric coordinates describe a point's position relative to the vertices of a triangle. They're the foundation of rasterization, texture interpolation, ray-triangle intersection, and mesh skinning.</p>
+
+  <h3 id="bary-def">Definition &amp; Properties</h3>
+  <p>Any point <strong>P</strong> inside (or on) a triangle with vertices A, B, C can be written as a weighted sum:</p>
+  <div class="mb"><div class="lbl">DEFINITION</div>$$\mathbf{P} = \lambda_1\mathbf{A} + \lambda_2\mathbf{B} + \lambda_3\mathbf{C}, \quad \lambda_1 + \lambda_2 + \lambda_3 = 1$$</div>
+
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d g"></span>Area Method</div>
+    <p style="font-size:12.5px;margin-bottom:8px">Each coordinate = ratio of sub-triangle area to total area.</p>
+    $$\lambda_1=\frac{\text{Area}(PBC)}{\text{Area}(ABC)},\quad\lambda_2=\frac{\text{Area}(APC)}{\text{Area}(ABC)},\quad\lambda_3=\frac{\text{Area}(ABP)}{\text{Area}(ABC)}$$</div>
+    <div class="card"><div class="ct"><span class="d p"></span>Via Cross Products</div>
+    <p style="font-size:12.5px;margin-bottom:8px">Efficient computation using 2D cross products (z-component only in screen space):</p>
+    $$\text{Area}=\frac{1}{2}\|(\mathbf{B}-\mathbf{A})\times(\mathbf{C}-\mathbf{A})\|$$</div>
+  </div>
+
+  <h4>Geometric interpretation of λ values</h4>
+  <div class="tw"><table>
+    <tr><th>λ values</th><th>Location</th></tr>
+    <tr><td>All ∈ [0,1]</td><td>Inside the triangle</td></tr>
+    <tr><td>One = 0, others ∈ [0,1]</td><td>On an edge</td></tr>
+    <tr><td>One = 1, others = 0</td><td>Exactly at that vertex</td></tr>
+    <tr><td>Any &lt; 0</td><td>Outside the triangle</td></tr>
+  </table></div>
+
+  <div class="notice success"><span class="ni2">💡</span>Point-in-triangle test: compute λ₁, λ₂, λ₃ — if all are ≥ 0 and sum = 1, the point is inside.</div>
+
+  <h4>Computing from Vertex Positions (2D)</h4>
+  <div class="mb"><div class="lbl">2D FORMULA</div>
+  $$\lambda_1 = \frac{(y_B-y_C)(x-x_C)+(x_C-x_B)(y-y_C)}{(y_B-y_C)(x_A-x_C)+(x_C-x_B)(y_A-y_C)}$$
+  $$\lambda_2 = \frac{(y_C-y_A)(x-x_C)+(x_A-x_C)(y-y_C)}{(y_B-y_C)(x_A-x_C)+(x_C-x_B)(y_A-y_C)},\quad\lambda_3=1-\lambda_1-\lambda_2$$</div>
+
+  <h3 id="ray-tri">Ray-Triangle Intersection — Möller–Trumbore</h3>
+  <p>The industry-standard algorithm. Finds the intersection of a ray with a triangle directly in barycentric coordinates — no need to find the plane first.</p>
+  <div class="mb"><div class="lbl">MÖLLER–TRUMBORE</div>
+  $$\text{Ray: }\mathbf{P}(t)=\mathbf{O}+t\hat{\mathbf{D}}$$
+  $$\mathbf{e}_1=\mathbf{V}_1-\mathbf{V}_0,\quad\mathbf{e}_2=\mathbf{V}_2-\mathbf{V}_0,\quad\mathbf{h}=\hat{\mathbf{D}}\times\mathbf{e}_2$$
+  $$a=\mathbf{e}_1\cdot\mathbf{h}\quad\text{(if }|a|<\varepsilon\text{: ray parallel, no hit)}$$
+  $$f=\frac{1}{a},\quad\mathbf{s}=\mathbf{O}-\mathbf{V}_0,\quad u=f(\mathbf{s}\cdot\mathbf{h})\quad\text{(if }u<0\text{ or }u>1\text{: miss)}$$
+  $$\mathbf{q}=\mathbf{s}\times\mathbf{e}_1,\quad v=f(\hat{\mathbf{D}}\cdot\mathbf{q})\quad\text{(if }v<0\text{ or }u+v>1\text{: miss)}$$
+  $$t=f(\mathbf{e}_2\cdot\mathbf{q})\quad\text{(if }t<0\text{: behind ray)}$$</div>
+  <p>Output: hit point = O + tD, and barycentric coords (u, v, 1−u−v) for interpolation.</p>
+
+<pre><code>bool rayTriangle(vec3 O, vec3 D, vec3 V0, vec3 V1, vec3 V2,
+                 float& t, float& u, float& v) {
+    vec3 e1 = V1-V0, e2 = V2-V0;
+    vec3 h = cross(D, e2);
+    float a = dot(e1, h);
+    if (fabsf(a) < 1e-7f) return false; // parallel
+    float f = 1.0f / a;
+    vec3 s = O - V0;
+    u = f * dot(s, h);
+    if (u < 0 || u > 1) return false;
+    vec3 q = cross(s, e1);
+    v = f * dot(D, q);
+    if (v < 0 || u+v > 1) return false;
+    t = f * dot(e2, q);
+    return t > 1e-7f;
+}</code></pre>
+
+  <h3 id="bary-interp">Attribute Interpolation &amp; Perspective Correction</h3>
+  <p>Barycentric coordinates let you interpolate any per-vertex attribute (UVs, normals, color) across a triangle surface.</p>
+  <div class="mb"><div class="lbl">LINEAR INTERPOLATION</div>$$\text{attr}(\mathbf{P}) = \lambda_1\cdot\text{attr}(A)+\lambda_2\cdot\text{attr}(B)+\lambda_3\cdot\text{attr}(C)$$</div>
+
+  <div class="notice danger"><span class="ni2">🚨</span><strong>Perspective-correct interpolation</strong> — naïve linear barycentric interpolation of UVs in screen space is <em>wrong</em>. It produces the rubber-sheet distortion visible on rotating quads. You must divide by w first.</div>
+
+  <div class="mb"><div class="lbl">PERSPECTIVE-CORRECT</div>
+  $$\text{attr}(\mathbf{P}) = \frac{\lambda_1\frac{a_A}{w_A}+\lambda_2\frac{a_B}{w_B}+\lambda_3\frac{a_C}{w_C}}{\frac{\lambda_1}{w_A}+\frac{\lambda_2}{w_B}+\frac{\lambda_3}{w_C}}$$
+  <p style="font-size:11px;color:var(--text3);margin-top:6px">w = clip-space w of each vertex. This is what GPU hardware does automatically for varyings in fragment shaders.</p></div>
+  <div class="engine-note"><strong>🎮 Engine use:</strong> Ray-triangle (Möller–Trumbore) is used in raycast hit detection, ray tracing, mesh picking, navigation mesh queries, and lightmap baking. Barycentric interpolation underpins everything the rasterizer does — UV mapping, normal interpolation, vertex color blending, and skeletal skinning weights.</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ CH15: CURVES ══ -->
+<div class="chapter" id="ch-curves">
+  <div class="ch-head"><span class="ch-num">CHAPTER 15</span><h2 class="ch-title">Curves &amp; Splines</h2></div>
+  <p class="ch-desc">Curves are used everywhere in games and engines: animation paths, easing functions, procedural generation, UI transitions, and character motion. All are parametric — they map a scalar t ∈ [0,1] to a point.</p>
+
+  <h3 id="bezier">Bézier Curves</h3>
+  <p>Defined by control points. The curve passes through the first and last point; intermediate points act as "attractors." Constructed by repeated linear interpolation (de Casteljau's algorithm).</p>
+
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d"></span>Linear (degree 1)</div>
+    $$\mathbf{B}(t)=(1-t)\mathbf{P}_0+t\mathbf{P}_1$$
+    <p style="font-size:11px;color:var(--text3);margin-top:6px">2 control points. Just a straight line — same as LERP.</p></div>
+    <div class="card"><div class="ct"><span class="d g"></span>Quadratic (degree 2)</div>
+    $$\mathbf{B}(t)=(1-t)^2\mathbf{P}_0+2t(1-t)\mathbf{P}_1+t^2\mathbf{P}_2$$
+    <p style="font-size:11px;color:var(--text3);margin-top:6px">3 control points. Used in SVG paths, font outlines (TrueType).</p></div>
+    <div class="card"><div class="ct"><span class="d p"></span>Cubic (degree 3)</div>
+    $$\mathbf{B}(t)=(1-t)^3\mathbf{P}_0+3t(1-t)^2\mathbf{P}_1+3t^2(1-t)\mathbf{P}_2+t^3\mathbf{P}_3$$
+    <p style="font-size:11px;color:var(--text3);margin-top:6px">4 control points. Used in animation curves, Unity/Unreal Bezier splines.</p></div>
+  </div>
+
+  <h4>General Form — Bernstein Polynomials</h4>
+  <div class="mb">$$\mathbf{B}(t)=\sum_{i=0}^{n}\binom{n}{i}(1-t)^{n-i}t^i\mathbf{P}_i,\quad t\in[0,1]$$</div>
+
+  <h4>Cubic Bézier as Matrix Form</h4>
+  <div class="mb"><div class="lbl">MATRIX FORM</div>
+  $$\mathbf{B}(t)=\begin{bmatrix}t^3&t^2&t&1\end{bmatrix}\begin{bmatrix}-1&3&-3&1\\3&-6&3&0\\-3&3&0&0\\1&0&0&0\end{bmatrix}\begin{bmatrix}\mathbf{P}_0\\\mathbf{P}_1\\\mathbf{P}_2\\\mathbf{P}_3\end{bmatrix}$$</div>
+
+  <h4>Derivative (Tangent Vector)</h4>
+  <p>The first derivative gives the tangent direction at any point — essential for orienting objects along a path.</p>
+  <div class="mb">$$\mathbf{B}'(t)=3(1-t)^2(\mathbf{P}_1-\mathbf{P}_0)+6t(1-t)(\mathbf{P}_2-\mathbf{P}_1)+3t^2(\mathbf{P}_3-\mathbf{P}_2)$$</div>
+
+  <h4>de Casteljau's Algorithm</h4>
+  <p>Recursively lerp between control points — numerically stable evaluation and subdivision:</p>
+<pre><code>// Evaluate cubic Bezier at t using de Casteljau
+vec3 bezier(vec3 P0, vec3 P1, vec3 P2, vec3 P3, float t) {
+    vec3 A = lerp(P0, P1, t), B = lerp(P1, P2, t), C = lerp(P2, P3, t);
+    vec3 D = lerp(A, B, t),   E = lerp(B, C, t);
+    return lerp(D, E, t);
+}</code></pre>
+
+  <h4>Key Properties</h4>
+  <ul class="cl">
+    <li><strong>Endpoint interpolation:</strong> B(0) = P₀, B(1) = Pₙ always</li>
+    <li><strong>Tangent at endpoints:</strong> B'(0) = n(P₁−P₀), B'(1) = n(Pₙ−Pₙ₋₁)</li>
+    <li><strong>Convex hull property:</strong> Curve lies entirely within the convex hull of its control points</li>
+    <li><strong>Affine invariance:</strong> Transform control points, curve transforms accordingly</li>
+    <li><strong>C0 continuity</strong> between segments is free; <strong>C1</strong> requires P₃ of segment 1 = P₀ of segment 2 and tangents match</li>
+  </ul>
+
+  <h3 id="hermite">Hermite Splines &amp; Catmull-Rom</h3>
+  <p>Cubic Hermite splines are defined by <strong>positions and tangents</strong> at each endpoint — more intuitive for animation than Bézier control points.</p>
+
+  <div class="mb"><div class="lbl">CUBIC HERMITE</div>
+  $$\mathbf{H}(t) = (2t^3-3t^2+1)\mathbf{P}_0 + (t^3-2t^2+t)\mathbf{T}_0 + (-2t^3+3t^2)\mathbf{P}_1 + (t^3-t^2)\mathbf{T}_1$$
+  <p style="font-size:11px;color:var(--text3);margin-top:6px">P₀,P₁ = endpoints. T₀,T₁ = tangent vectors at each endpoint.</p></div>
+
+  <h4>Hermite Basis Functions (Blending Functions)</h4>
+  <div class="fg">
+    <div class="fi"><div class="fn">h₀₀ (start position)</div>$$2t^3-3t^2+1$$</div>
+    <div class="fi"><div class="fn">h₁₀ (start tangent)</div>$$t^3-2t^2+t$$</div>
+    <div class="fi"><div class="fn">h₀₁ (end position)</div>$$-2t^3+3t^2$$</div>
+    <div class="fi"><div class="fn">h₁₁ (end tangent)</div>$$t^3-t^2$$</div>
+  </div>
+
+  <h4>Catmull-Rom Spline</h4>
+  <p>A Hermite spline where tangents are computed <em>automatically</em> from neighboring points. Passes through all control points. Standard in game animation systems.</p>
+  <div class="mb"><div class="lbl">CATMULL-ROM TANGENTS</div>
+  $$\mathbf{T}_i = \frac{\mathbf{P}_{i+1}-\mathbf{P}_{i-1}}{2}$$
+  <p style="font-size:11px;color:var(--text3);margin-top:6px">Tangent at point i = half the vector from previous to next point.</p></div>
+  <div class="mb"><div class="lbl">CATMULL-ROM MATRIX FORM</div>
+  $$\mathbf{CR}(t)=\frac{1}{2}\begin{bmatrix}t^3&t^2&t&1\end{bmatrix}\begin{bmatrix}-1&3&-3&1\\2&-5&4&-1\\-1&0&1&0\\0&2&0&0\end{bmatrix}\begin{bmatrix}\mathbf{P}_{i-1}\\\mathbf{P}_i\\\mathbf{P}_{i+1}\\\mathbf{P}_{i+2}\end{bmatrix}$$</div>
+
+  <div class="notice tip"><span class="ni2">🎮</span>Catmull-Rom is the most practical spline for game dev — automatic tangents, passes through all control points, C1 continuous. Use it for camera paths, character movement paths, and procedural track generation.</div>
+
+  <h3 id="arclength">Arc Length &amp; Constant-Speed Traversal</h3>
+  <p>The parameter t does <em>not</em> move at constant speed along a curve — it moves faster where control points are far apart. To move at constant speed you need arc-length parameterization.</p>
+
+  <h4>Arc Length Formula</h4>
+  <div class="mb">$$L(t)=\int_0^t\|\mathbf{B}'(u)\|\,du$$<p style="font-size:11px;color:var(--text3);margin-top:6px">No closed form for cubic Bézier — must be numerically approximated.</p></div>
+
+  <h4>Practical Approach: Arc Length Table</h4>
+  <ol class="steps">
+    <li>Sample the curve at N uniform t values (e.g. N=100).</li>
+    <li>Build a table: accumulated arc length at each sample.</li>
+    <li>To move at constant speed, look up the desired arc length in the table and interpolate to find the corresponding t.</li>
+    <li>Use binary search or linear scan for the lookup.</li>
+  </ol>
+<pre><code>// Build arc length lookup table
+std::vector&lt;float&gt; buildArcLengthTable(auto& curve, int N=100) {
+    std::vector&lt;float&gt; table(N+1);
+    table[0] = 0;
+    vec3 prev = curve(0);
+    for (int i = 1; i <= N; i++) {
+        vec3 curr = curve(float(i)/N);
+        table[i] = table[i-1] + length(curr - prev);
+        prev = curr;
+    }
+    return table; // table[N] = total arc length
+}</code></pre>
+
+  <h4>Curvature</h4>
+  <div class="mb">$$\kappa=\frac{\|\mathbf{B}'(t)\times\mathbf{B}''(t)\|}{\|\mathbf{B}'(t)\|^3}$$<p style="font-size:11px;color:var(--text3);margin-top:6px">Curvature = reciprocal of the radius of the osculating circle. High κ = sharp turn. Used for camera banking, vehicle physics, road generation.</p></div>
+  <div class="engine-note"><strong>🎮 Engine use:</strong> Cubic Bézier is used in animation curve editors (Unity AnimationCurve, Unreal timeline). Catmull-Rom is used for spline-based movement paths. Arc-length reparameterization is needed any time you need constant-speed motion, e.g. a train on a track or a camera dolly.</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ CH16: SDF ══ -->
+<div class="chapter" id="ch-sdf">
+  <div class="ch-head"><span class="ch-num">CHAPTER 16</span><h2 class="ch-title">Signed Distance Fields (SDFs)</h2></div>
+  <p class="ch-desc">A function f(p) that returns the signed distance from point p to the nearest surface. Negative = inside, positive = outside, zero = on surface. The foundation of raymarching, procedural geometry, soft shadows, and font rendering.</p>
+
+  <h3 id="sdf-shapes">Primitive SDFs</h3>
+  <p>These functions are the building blocks. All take a query point <strong>p</strong> and shape parameters.</p>
+
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d"></span>Sphere</div>
+    $$\text{sdSphere}(\mathbf{p}, r) = \|\mathbf{p}\| - r$$</div>
+    <div class="card"><div class="ct"><span class="d g"></span>Box (half-extents b)</div>
+    $$\mathbf{q}=|\mathbf{p}|-\mathbf{b},\quad\text{sdBox}=\|\max(\mathbf{q},0)\|+\min(\max(q_x,q_y,q_z),0)$$</div>
+    <div class="card"><div class="ct"><span class="d p"></span>Plane (normal n̂, offset h)</div>
+    $$\text{sdPlane}(\mathbf{p},\hat{\mathbf{n}},h) = \mathbf{p}\cdot\hat{\mathbf{n}} - h$$</div>
+    <div class="card"><div class="ct"><span class="d y"></span>Cylinder (radius r, height h)</div>
+    $$\mathbf{d}=\bigl|\bigl(\|\mathbf{p}_{xz}\|,\,p_y\bigr)\bigr|-\bigl(r,h\bigr)$$
+    $$\text{sdCyl}=\min(\max(d_x,d_y),0)+\|\max(\mathbf{d},0)\|$$</div>
+    <div class="card"><div class="ct"><span class="d t"></span>Torus (major R, minor r)</div>
+    $$\mathbf{q}=\bigl(\|\mathbf{p}_{xz}\|-R,\;p_y\bigr),\quad\text{sdTorus}=\|\mathbf{q}\|-r$$</div>
+    <div class="card"><div class="ct"><span class="d r"></span>Capsule (endpoints A,B, radius r)</div>
+    $$\mathbf{pa}=\mathbf{p}-A,\;\mathbf{ba}=B-A,\;t=\text{clamp}(\mathbf{pa}\cdot\mathbf{ba}/\mathbf{ba}\cdot\mathbf{ba},0,1)$$
+    $$\text{sdCapsule}=\|\mathbf{pa}-t\cdot\mathbf{ba}\|-r$$</div>
+  </div>
+
+  <div class="notice info"><span class="ni2">ℹ️</span>All primitive SDFs above are <strong>exact</strong> — the returned value is the true geometric distance. Some complex SDFs (e.g. fractals) are only <em>bounds</em> — they underestimate distance which is still safe for raymarching but slows convergence.</div>
+
+  <h3 id="sdf-ops">Boolean Operations &amp; Domain Operations</h3>
+  <p>SDFs compose with simple math. This is what makes them powerful for procedural modeling.</p>
+
+  <div class="fg">
+    <div class="fi"><div class="fn">Union</div>$$\text{opUnion}(d_1,d_2)=\min(d_1,d_2)$$</div>
+    <div class="fi"><div class="fn">Intersection</div>$$\text{opIntersect}(d_1,d_2)=\max(d_1,d_2)$$</div>
+    <div class="fi"><div class="fn">Subtraction (A minus B)</div>$$\text{opSubtract}(d_A,d_B)=\max(d_A,-d_B)$$</div>
+    <div class="fi"><div class="fn">Smooth Union (blend radius k)</div>$$h=\text{clamp}(0.5+0.5(d_2-d_1)/k,\,0,1)$$$$\text{opSmoothUnion}=\text{mix}(d_2,d_1,h)-k\cdot h\cdot(1-h)$$</div>
+    <div class="fi"><div class="fn">Repetition (period c)</div>$$\mathbf{p}'=\mathbf{p}-c\cdot\text{round}(\mathbf{p}/c)$$<p style="font-size:11px;color:var(--text3);margin-top:4px">Tile any SDF infinitely for free</p></div>
+    <div class="fi"><div class="fn">Displacement</div>$$\text{opDisplace}(d,\mathbf{p})=d+f(\mathbf{p})$$<p style="font-size:11px;color:var(--text3);margin-top:4px">Add any noise/wave function to deform shape</p></div>
+    <div class="fi"><div class="fn">Elongate (along axis h)</div>$$\mathbf{p}'=\mathbf{p}-\text{clamp}(\mathbf{p},-\mathbf{h},\mathbf{h})$$<p style="font-size:11px;color:var(--text3);margin-top:4px">Extrude any shape along an axis</p></div>
+    <div class="fi"><div class="fn">Round (add radius r)</div>$$\text{opRound}(d,r)=d-r$$<p style="font-size:11px;color:var(--text3);margin-top:4px">Inflate / round off any SDF's corners</p></div>
+  </div>
+
+  <h3 id="sdf-normal">Normals, Raymarching &amp; Applications</h3>
+  <h4>Computing the Normal via Gradient</h4>
+  <p>The gradient of an SDF points in the direction of steepest distance increase — which is exactly the surface normal.</p>
+  <div class="mb"><div class="lbl">GRADIENT NORMAL (TETRAHEDRON METHOD)</div>
+  $$\hat{\mathbf{n}}=\text{normalize}\!\left(\begin{pmatrix}f(\mathbf{p}+\varepsilon\mathbf{k}_0)-f(\mathbf{p}-\varepsilon\mathbf{k}_0)\\f(\mathbf{p}+\varepsilon\mathbf{k}_1)-f(\mathbf{p}-\varepsilon\mathbf{k}_1)\\f(\mathbf{p}+\varepsilon\mathbf{k}_2)-f(\mathbf{p}-\varepsilon\mathbf{k}_2)\end{pmatrix}\right)$$
+  <p style="font-size:11px;color:var(--text3);margin-top:6px">Where k₀=(1,−1,−1), k₁=(−1,−1,1), k₂=(−1,1,−1). ε ≈ 0.0001. Requires only 4 SDF evaluations vs 6 for central differences.</p></div>
+
+  <h4>Sphere Tracing (Raymarching)</h4>
+  <p>March along a ray, stepping by the SDF value at each point. Safe because the SDF guarantees you won't overshoot the surface.</p>
+<pre><code>// Sphere tracing — GLSL
+float raymarch(vec3 ro, vec3 rd) {
+    float t = 0.0;
+    for (int i = 0; i < 128; i++) {
+        float d = sdf(ro + rd * t);   // evaluate scene SDF
+        if (d < 0.001) return t;      // hit
+        if (t > 1000.0) return -1.0;  // miss
+        t += d;                        // safe step = SDF value
+    }
+    return -1.0;
+}</code></pre>
+
+  <h4>Soft Shadows via SDF</h4>
+  <div class="mb"><div class="lbl">SOFT SHADOW</div>
+  $$\text{shadow}=\min_{t\in[t_{min},t_{max}]}\frac{k\cdot\text{sdf}(\mathbf{p}+t\hat{\mathbf{l}})}{t}$$
+  <p style="font-size:11px;color:var(--text3);margin-top:6px">k controls penumbra sharpness (typically 2–128). March from surface toward light — small SDF values = close to occluder = darker shadow.</p></div>
+
+  <h4>Ambient Occlusion via SDF</h4>
+  <div class="mb">$$\text{ao}=1-\sum_{i=1}^{N}\frac{1}{2^i}\!\left(\frac{i\cdot\delta-\text{sdf}(\mathbf{p}+i\delta\hat{\mathbf{n}})}{i\cdot\delta}\right)$$<p style="font-size:11px;color:var(--text3);margin-top:6px">Sample SDF along the normal direction. Cheap AO approximation with no ray casting needed.</p></div>
+
+  <div class="engine-note"><strong>🎮 Engine use:</strong> SDFs are used in font/text rendering (SDF fonts — scale without aliasing), UI distance-based effects, raymarching shaders in post-processing (God rays, volumetric fog), procedural geometry generation, Lumen (Unreal Engine 5's global illumination uses mesh SDFs), and collision detection in soft-body physics. Smooth-union enables "metaball" style organic blending.</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ CH17: PBR ══ -->
+<div class="chapter" id="ch-pbr">
+  <div class="ch-head"><span class="ch-num">CHAPTER 17</span><h2 class="ch-title">PBR Lighting Math</h2></div>
+  <p class="ch-desc">Physically Based Rendering puts lighting on a mathematical foundation. Understanding these equations is essential for writing or debugging PBR shaders and understanding what material parameters actually mean.</p>
+
+  <h3 id="render-eq">The Rendering Equation</h3>
+  <p>The theoretical basis for all lighting in graphics. Every rendering technique is an approximation of this:</p>
+  <div class="mb"><div class="lbl">RENDERING EQUATION (Kajiya 1986)</div>
+  $$L_o(\mathbf{p},\omega_o)=L_e(\mathbf{p},\omega_o)+\int_{\Omega}f_r(\mathbf{p},\omega_i,\omega_o)\,L_i(\mathbf{p},\omega_i)\,(\omega_i\cdot\hat{\mathbf{n}})\,d\omega_i$$</div>
+  <div class="tw"><table>
+    <tr><th>Symbol</th><th>Meaning</th></tr>
+    <tr><td>L_o(p, ω_o)</td><td>Outgoing radiance from point p in direction ω_o</td></tr>
+    <tr><td>L_e(p, ω_o)</td><td>Emitted light (for emissive surfaces)</td></tr>
+    <tr><td>f_r(p, ω_i, ω_o)</td><td>BRDF — fraction of incoming light reflected toward ω_o</td></tr>
+    <tr><td>L_i(p, ω_i)</td><td>Incoming radiance from direction ω_i</td></tr>
+    <tr><td>ω_i · n̂</td><td>Cosine term — Lambert's law (cos θ)</td></tr>
+    <tr><td>∫_Ω … dω_i</td><td>Integrate over all incoming directions (hemisphere)</td></tr>
+  </table></div>
+
+  <h4>Radiometric Terms</h4>
+  <div class="tw"><table>
+    <tr><th>Term</th><th>Symbol</th><th>Units</th><th>Meaning</th></tr>
+    <tr><td>Radiant flux</td><td>Φ</td><td>Watts (W)</td><td>Total power emitted</td></tr>
+    <tr><td>Irradiance</td><td>E</td><td>W/m²</td><td>Power arriving per unit area</td></tr>
+    <tr><td>Radiance</td><td>L</td><td>W/m²/sr</td><td>Power per area per solid angle — what the camera sees</td></tr>
+    <tr><td>Solid angle</td><td>ω</td><td>steradians (sr)</td><td>2D angle generalized to 3D sphere</td></tr>
+  </table></div>
+
+  <h3 id="brdf">BRDF &amp; Cook-Torrance Microfacet Model</h3>
+  <p>The BRDF (Bidirectional Reflectance Distribution Function) describes how a surface scatters light. PBR uses the <strong>Cook-Torrance microfacet BRDF</strong>:</p>
+  <div class="mb"><div class="lbl">COOK-TORRANCE BRDF</div>
+  $$f_r(\omega_i,\omega_o)=\underbrace{\frac{\mathbf{c}_{diff}}{\pi}}_{\text{diffuse (Lambert)}}+\underbrace{\frac{D(\mathbf{h})\,F(\omega_i,\mathbf{h})\,G(\omega_i,\omega_o,\mathbf{h})}{4(\omega_o\cdot\hat{\mathbf{n}})(\omega_i\cdot\hat{\mathbf{n}})}}_{\text{specular (Cook-Torrance)}}$$
+  <p style="font-size:11px;color:var(--text3);margin-top:6px">h = normalize(ω_i + ω_o) — the halfway vector between light and view direction.</p></div>
+
+  <h4>The Three Terms: D, F, G</h4>
+  <div class="cg">
+    <div class="card"><div class="ct"><span class="d"></span>D — Normal Distribution Function</div>
+    <p style="font-size:12.5px;margin-bottom:8px">How many microfacets are aligned with the halfway vector h. Controls specular highlight shape/size.</p>
+    <p style="font-size:11px;color:var(--accent4)">GGX / Trowbridge-Reitz (industry standard):</p>
+    $$D_{GGX}(\mathbf{h})=\frac{\alpha^2}{\pi\bigl((\hat{\mathbf{n}}\cdot\mathbf{h})^2(\alpha^2-1)+1\bigr)^2}$$
+    <p style="font-size:11px;color:var(--text3);margin-top:6px">α = roughness². Roughness ∈ [0,1] → α² ∈ [0,1].</p></div>
+    <div class="card"><div class="ct"><span class="d g"></span>G — Geometry / Shadow-Masking</div>
+    <p style="font-size:12.5px;margin-bottom:8px">Fraction of microfacets that are neither shadowed (from light) nor masked (from view). Prevents energy gain at grazing angles.</p>
+    <p style="font-size:11px;color:var(--accent4)">Smith GGX (split into light + view terms):</p>
+    $$G_{Smith}=G_1(\omega_i)\cdot G_1(\omega_o),\quad G_1(\omega)=\frac{\hat{\mathbf{n}}\cdot\omega}{(\hat{\mathbf{n}}\cdot\omega)(1-k)+k}$$
+    $$k=\frac{(\alpha+1)^2}{8}\;\text{(direct)},\quad k=\frac{\alpha^2}{2}\;\text{(IBL)}$$</div>
+  </div>
+
+  <h3 id="fresnel">Fresnel Effect</h3>
+  <p>How much light is reflected vs. refracted, depending on the view angle. At grazing angles, <em>all</em> surfaces become mirror-like — this is physically correct.</p>
+  <div class="mb"><div class="lbl">SCHLICK APPROXIMATION (used in all real-time PBR)</div>
+  $$F(\omega_i,\mathbf{h})=F_0+(1-F_0)(1-\omega_i\cdot\mathbf{h})^5$$
+  <p style="font-size:11px;color:var(--text3);margin-top:6px">F₀ = reflectance at normal incidence (0° angle). Interpolated from F₀ to 1 as grazing angle increases.</p></div>
+
+  <h4>F₀ Values by Material</h4>
+  <div class="tw"><table>
+    <tr><th>Material</th><th>F₀ (linear sRGB)</th><th>Notes</th></tr>
+    <tr><td>Water</td><td>0.02</td><td>Low base reflectance</td></tr>
+    <tr><td>Skin</td><td>0.028</td><td>—</td></tr>
+    <tr><td>Common dielectrics (plastic, wood, stone)</td><td>0.04 (sRGB ~0.5)</td><td>Industry default for non-metals</td></tr>
+    <tr><td>Glass</td><td>0.04–0.08</td><td>Varies with IOR</td></tr>
+    <tr><td>Iron</td><td>(0.56, 0.57, 0.58)</td><td>Metals: F₀ is chromatic</td></tr>
+    <tr><td>Gold</td><td>(1.0, 0.71, 0.29)</td><td>—</td></tr>
+    <tr><td>Aluminium</td><td>(0.91, 0.92, 0.92)</td><td>—</td></tr>
+  </table></div>
+
+  <div class="notice info"><span class="ni2">ℹ️</span>In a metallic workflow: <strong>metallic = 0</strong> → F₀ = 0.04 (dielectric). <strong>metallic = 1</strong> → F₀ = albedo color. No diffuse term for metals (all energy goes into specular).</div>
+
+  <h3 id="pbr-terms">PBR Material Parameters &amp; Full Shader</h3>
+  <h4>Standard PBR Material Inputs</h4>
+  <div class="tw"><table>
+    <tr><th>Parameter</th><th>Range</th><th>Meaning</th></tr>
+    <tr><td>Albedo / Base Color</td><td>[0,1]³</td><td>Diffuse color for dielectrics; F₀ for metals</td></tr>
+    <tr><td>Metallic</td><td>[0,1]</td><td>0 = dielectric, 1 = metal</td></tr>
+    <tr><td>Roughness</td><td>[0,1]</td><td>0 = mirror, 1 = fully rough (Lambertian). Used as α² in D and G terms.</td></tr>
+    <tr><td>Normal</td><td>tangent-space</td><td>Per-pixel surface normal from normal map</td></tr>
+    <tr><td>AO</td><td>[0,1]</td><td>Baked / SSAO ambient occlusion</td></tr>
+    <tr><td>Emissive</td><td>[0,∞)³</td><td>HDR self-illumination</td></tr>
+  </table></div>
+
+  <h4>Full Direct Lighting PBR (GLSL)</h4>
+<pre><code>vec3 pbr(vec3 albedo, float metallic, float roughness,
+         vec3 N, vec3 V, vec3 L, vec3 lightColor) {
+    vec3 H = normalize(V + L);
+    float NdotL = max(dot(N,L), 0.0);
+    float NdotV = max(dot(N,V), 0.0);
+    float NdotH = max(dot(N,H), 0.0);
+    float HdotV = max(dot(H,V), 0.0);
+
+    // F0: 0.04 for dielectrics, albedo for metals
+    vec3 F0 = mix(vec3(0.04), albedo, metallic);
+
+    // D — GGX Normal Distribution
+    float a  = roughness * roughness;
+    float a2 = a * a;
+    float denom = NdotH*NdotH*(a2-1.0)+1.0;
+    float D = a2 / (PI * denom * denom);
+
+    // F — Schlick Fresnel
+    vec3 F = F0 + (1.0-F0)*pow(1.0-HdotV, 5.0);
+
+    // G — Smith GGX Geometry
+    float k = (roughness+1.0)*(roughness+1.0)/8.0;
+    float GL = NdotL / (NdotL*(1.0-k)+k);
+    float GV = NdotV / (NdotV*(1.0-k)+k);
+    float G  = GL * GV;
+
+    // Specular BRDF
+    vec3 specular = (D*F*G) / max(4.0*NdotL*NdotV, 0.001);
+
+    // Diffuse (Lambert) — metals have no diffuse
+    vec3 kD = (1.0-F)*(1.0-metallic);
+    vec3 diffuse = kD * albedo / PI;
+
+    return (diffuse + specular) * lightColor * NdotL;
+}</code></pre>
+
+  <h4>Lambert's Cosine Law &amp; Light Falloff</h4>
+  <div class="fg">
+    <div class="fi"><div class="fn">Lambert cosine term</div>$$L_{diffuse}=\frac{\mathbf{c}_{diff}}{\pi}\cdot(\hat{\mathbf{n}}\cdot\hat{\mathbf{l}})$$<p style="font-size:11px;color:var(--text3);margin-top:4px">The π normalizes so total reflected energy ≤ incident energy</p></div>
+    <div class="fi"><div class="fn">Point light falloff</div>$$E=\frac{\Phi}{4\pi r^2}$$<p style="font-size:11px;color:var(--text3);margin-top:4px">Inverse-square law. Never use linear falloff — it's non-physical.</p></div>
+    <div class="fi"><div class="fn">Blinn-Phong (non-PBR reference)</div>$$L_{spec}=k_s(\hat{\mathbf{n}}\cdot\mathbf{h})^{\alpha}$$<p style="font-size:11px;color:var(--text3);margin-top:4px">h = halfway vector. α = shininess. Legacy but still seen in tools/engines.</p></div>
+    <div class="fi"><div class="fn">Reflection vector</div>$$\mathbf{r}=2(\hat{\mathbf{n}}\cdot\hat{\mathbf{l}})\hat{\mathbf{n}}-\hat{\mathbf{l}}$$<p style="font-size:11px;color:var(--text3);margin-top:4px">Used in Phong, environment sampling, perfect specular bounce</p></div>
+    <div class="fi"><div class="fn">Refraction (Snell's law)</div>$$\eta_i\sin\theta_i=\eta_t\sin\theta_t$$<p style="font-size:11px;color:var(--text3);margin-top:4px">η = index of refraction. Air≈1, Water≈1.33, Glass≈1.5</p></div>
+    <div class="fi"><div class="fn">Refraction vector (GLSL)</div>$$\mathbf{r}=\text{refract}(-\hat{\mathbf{v}},\hat{\mathbf{n}},\eta_i/\eta_t)$$</div>
+  </div>
+
+  <div class="engine-note"><strong>🎮 Engine use:</strong> This is the math behind Unity's Standard/Lit shader, Unreal's default material, and every modern renderer. D, F, G can be swapped for different approximations. IBL (Image-Based Lighting) samples a pre-filtered environment cubemap for the integral term — the split-sum approximation (Karis 2013) is how it's done in real-time. Understanding these terms lets you write custom shaders, debug material issues, and build your own render pipeline.</div>
+</div>
+
+</div><!-- /content-area -->
+</main>
+
+<script>
+// Active nav
+const allIds = document.querySelectorAll('[id]');
+const navLinks = document.querySelectorAll('.ni');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      navLinks.forEach(l=>l.classList.remove('active'));
+      const a = document.querySelector(`.ni[href="#${e.target.id}"]`);
+      if(a) a.classList.add('active');
+    }
+  });
+},{rootMargin:'-15% 0px -72% 0px'});
+allIds.forEach(el=>obs.observe(el));
+
+// Progress
+window.addEventListener('scroll',()=>{
+  const el=document.documentElement;
+  const p=(el.scrollTop/(el.scrollHeight-el.clientHeight))*100;
+  document.getElementById('prog').style.width=p+'%';
+});
+
+// Search
+function filterNav(q){
+  q=q.toLowerCase();
+  document.querySelectorAll('.ni').forEach(i=>{
+    i.style.display=i.textContent.toLowerCase().includes(q)?'':'none';
+  });
+  document.querySelectorAll('.nav-gl').forEach(l=>l.style.display=q?'none':'');
+}
+
+function toggleMenu(){
+  document.getElementById('sb').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+function closeMenu(){
+  document.getElementById('sb').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+</script>
+</body>
+</html>
